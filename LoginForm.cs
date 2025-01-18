@@ -35,7 +35,7 @@ namespace comradewolfxl
         {
             ComradeHttpUtils comradeHttpUtils = new ComradeHttpUtils();
 
-            bool canConnect = false;
+            bool canConnect;
             string hostName = this.hostBox.Text;
             string username = this.username.Text;
             string password = this.password.Text;
@@ -81,7 +81,22 @@ namespace comradewolfxl
             string hostName = this.hostBox.Text;
             if (this.emptyHostMessage(hostName)) { return; }
 
-            //this
+            //Remove host
+            this.hostBox.SelectedIndex = -1;
+            this.hostBox.SelectedItem = null;
+            this.hostBox.Items.Remove(hostName);
+            
+            Dictionary<int, string> hosts = new Dictionary<int, string>();
+
+            int i = 0;
+
+            foreach (string item in this.hostBox.Items)
+            {
+                hosts[i] = item;
+                i++;
+            }
+
+            wolfUtils.saveHostInfo(hosts);
 
         }
 
