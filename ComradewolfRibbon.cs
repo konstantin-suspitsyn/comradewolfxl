@@ -15,7 +15,8 @@ namespace comradewolfxl
 
         private void button1_Click(object sender, RibbonControlEventArgs e)
         {
-
+            LoginForm loginForm = new LoginForm();
+            loginForm.ShowDialog();
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -38,11 +39,79 @@ namespace comradewolfxl
             string hostName = this.hostBox.Text;
             string username = this.username.Text;
             string password = this.password.Text;
+            string token = "";
+
+            canConnect = await this.AddHostToDictionary(hostName);
+
+            if (canConnect)
+            {
+
+                try
+                {
+                    token = await comradeHttpUtils.getToken(hostName, username, password);
+                } catch (UnauthorizedAccessException) {
+                    MessageBox.Show("Логин или пароль некорректные");
+                }
+
+                if (token != "")
+                {
+                    wolfUtils.StoreInRegistry("AUTH_TOKEN" + hostName, token);
+
+                    this.DialogResult = DialogResult.OK;
+
+                    this.Close();
+                } 
+
+            }
+
+
+        }
+
+        private void buttonExit_Click(object sender, EventArgs e)
+        {
+            string hostName = this.hostBox.Text;
+            if (this.emptyHostMessage(hostName)) { return; }
+
+            wolfUtils.DeleteFromRegistry("AUTH_TOKEN" + hostName);
+
+        }
+
+        private void delhost_Click(object sender, EventArgs e)
+        {
+            string hostName = this.hostBox.Text;
+            if (this.emptyHostMessage(hostName)) { return; }
+
+            //this
+
+        }
+
+        private bool emptyHostMessage(string hostName)
+        {
+            if (hostName == "")
+            {
+                MessageBox.Show("Необходимо выбрать host");
+                return true;
+            }
+            return false;
+        }
+
+        private async void addHostButton_Click(object sender, EventArgs e)
+        {
+            //Check host and add it if it exists
+            await this.AddHostToDictionary(this.hostBox.Text);
+
+        }
+
+        private async Task<bool> AddHostToDictionary(string hostName)
+        {
+            ComradeHttpUtils comradeHttpUtils = new ComradeHttpUtils();
+
+            bool canConnect = false;
 
             if (hostName == "")
             {
                 MessageBox.Show("Необходимо добавить Хост");
-                return;
+                return canConnect;
             }
             else
             {
@@ -53,40 +122,20 @@ namespace comradewolfxl
             if (!canConnect)
             {
                 MessageBox.Show("Сервер не отвечает или вы ввели неправильный адрес");
-                return;
+                return canConnect;
             }
 
             if (canConnect)
             {
 
-
                 Dictionary<int, string> hosts = wolfUtils.checkHost(hostName);
                 wolfUtils.saveHostInfo(hosts);
 
-                string token = await comradeHttpUtils.getToken(hostName, username, password);
-
-                wolfUtils.StoreInRegistry("AUTH_TOKEN" + hostName, token);
-
-                this.DialogResult = DialogResult.OK;
-
-                this.Close();
+                return canConnect;
 
             }
 
-
-        }
-
-        private void buttonExit_Click(object sender, EventArgs e)
-        {
-            string hostName = this.hostBox.Text;
-            if (hostName == "")
-            {
-                MessageBox.Show("Необходимо выбрать host");
-                return;
-            }
-
-            wolfUtils.DeleteFromRegistry("AUTH_TOKEN" + hostName);
-
+            return canConnect;
         }
     }
 }

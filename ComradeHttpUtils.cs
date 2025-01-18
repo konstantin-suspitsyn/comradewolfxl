@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Net.Http.Json;
 
 namespace comradewolfxl
 {
@@ -15,7 +16,7 @@ namespace comradewolfxl
 
         static readonly HttpClient client = new HttpClient();
         private const string HEALTH_CHECK_LINK = "health_check";
-        private const string TOKEN_LINK = "token";
+        private const string TOKEN_LINK = "v1/user/authenticate";
 
         ComradeWolfUtils comradeWolfUtils;
 
@@ -59,17 +60,28 @@ namespace comradewolfxl
 
         public async Task<string> getToken(string url, string username, string password)
         {
-
-            var formContent = new FormUrlEncodedContent(new[]
-{
-            new KeyValuePair<string, string>("username", username),
-            new KeyValuePair<string, string>("password", password)
-                    });
+            Dictionary<string, string> loginPayload = new Dictionary<string, string>() {
+                { "user", username },
+                {"password", password }
+            };
 
             var myHttpClient = new HttpClient();
-            var response = await myHttpClient.PostAsync(url + TOKEN_LINK, formContent);
+            JsonContent content = JsonContent.Create(loginPayload);
+            var response = await myHttpClient.PostAsync(url + TOKEN_LINK, content);
 
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                response.EnsureSuccessStatusCode();
+                // Handle success
+            }
+            catch (HttpRequestException ex) {
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    throw new UnauthorizedAccessException();
+                }  
+                throw ex;
+            }
+            
 
             string responseBody = await response.Content.ReadAsStringAsync();
             TokenModel tokenFromBackend

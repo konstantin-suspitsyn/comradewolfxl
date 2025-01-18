@@ -56,7 +56,7 @@
             // 
             // logInButton
             // 
-            this.logInButton.Label = "Войти";
+            this.logInButton.Label = "Вход на хост";
             this.logInButton.Name = "logInButton";
             this.logInButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.button1_Click);
             // 
