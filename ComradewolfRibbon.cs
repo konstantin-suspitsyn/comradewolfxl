@@ -18,5 +18,21 @@ namespace comradewolfxl
             LoginForm loginForm = new LoginForm();
             loginForm.ShowDialog();
         }
+
+        private void buttonCreateCube_Click(object sender, RibbonControlEventArgs e)
+        {
+            SelectCube selectCube = new SelectCube();
+            selectCube.ShowDialog();
+        }
+
+        private void buttonUpdateCube_Click(object sender, RibbonControlEventArgs e)
+        {
+
+        }
+
+        private void buttonChangeCube_Click(object sender, RibbonControlEventArgs e)
+        {
+
+        }
     }
 }

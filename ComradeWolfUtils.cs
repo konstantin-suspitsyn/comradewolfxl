@@ -142,6 +142,27 @@ namespace comradewolfxl
             return newHosts;
         }
 
+        public string ReadFromRegistry(string keyName, string defaultValue)
+        {
+            RegistryKey rootKey = Registry.CurrentUser;
+            string registryPath = REGISTRY_PATH;
+            using (RegistryKey rk = rootKey.OpenSubKey(registryPath, false))
+            {
+                if (rk == null)
+                {
+                    return defaultValue;
+                }
+
+                var res = rk.GetValue(keyName, defaultValue);
+                if (res == null)
+                {
+                    return defaultValue;
+                }
+
+                return res.ToString();
+            }
+        }
+
     }
 
     public class Entry

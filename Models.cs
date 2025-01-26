@@ -21,6 +21,41 @@ namespace comradewolfxl
         }
     }
 
+    
+
+    class OlapCube
+    {
+        public OlapCube() { }
+        public int id { get; set; }
+        public string name { get; set; }
+
+        public static explicit operator OlapCube(JObject v)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    class AvailableOlapCubes
+    {
+        public AvailableOlapCubes() { }
+        public OlapCube[] cubes { get; set; }
+}
+
+public class OlapFieldsProperty
+    {
+        public OlapFieldsProperty() { }
+        public string table_name { get; set; }
+        public string field_type { get; set; }
+        public string alias { get; set; }
+        public string front_name { get; set; }
+    }
+
+    class OlapFields
+    {
+        public OlapFields() { }
+
+    }
+
 
     internal class Models
     {

@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.Http.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 
 namespace comradewolfxl
 {
@@ -17,12 +20,53 @@ namespace comradewolfxl
         static readonly HttpClient client = new HttpClient();
         private const string HEALTH_CHECK_LINK = "health_check";
         private const string TOKEN_LINK = "v1/user/authenticate";
+        private const string AUTH_TOKEN_POSTFIX = "AUTH_TOKEN";
+        private const string LIST_OF_ALLOWED_TABLES = "v1/cube/available";
 
         ComradeWolfUtils comradeWolfUtils;
 
         public ComradeHttpUtils()
         {
-            comradeWolfUtils = new ComradeWolfUtils();
+            this.comradeWolfUtils = new ComradeWolfUtils();
+        }
+
+        public bool IsTokenValid(string token)
+        {
+            JwtSecurityToken jwtSecurityToken;
+            try
+            {
+                jwtSecurityToken = new JwtSecurityToken(token);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return jwtSecurityToken.ValidTo > DateTime.UtcNow;
+        }
+
+        internal async Task<Dictionary<int, string>> GetCubesAsync(string currentHost, string token)
+        {
+            Dictionary<int, string> cubes = new Dictionary<int, string>();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await client.GetAsync(currentHost + LIST_OF_ALLOWED_TABLES);
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            AvailableOlapCubes olapCubes = JsonConvert.DeserializeObject<AvailableOlapCubes>(responseBody);
+
+            foreach (OlapCube olapName in olapCubes.cubes)
+            {
+                cubes.Add(olapName.id, olapName.name);
+            }
+
+
+            return cubes;
+        }
+
+        public string GetAuthPostfix()
+        {
+            return AUTH_TOKEN_POSTFIX;
         }
 
         public async Task<bool> healthCheckAsync(string url)

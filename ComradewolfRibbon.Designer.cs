@@ -34,17 +34,50 @@
         /// </summary>
         private void InitializeComponent()
         {
+            Microsoft.Office.Tools.Ribbon.RibbonGroup cubeGroup;
+            this.buttonCreateCube = this.Factory.CreateRibbonButton();
+            this.buttonUpdateCube = this.Factory.CreateRibbonButton();
+            this.buttonChangeCube = this.Factory.CreateRibbonButton();
             this.tab1 = this.Factory.CreateRibbonTab();
             this.userGroup = this.Factory.CreateRibbonGroup();
             this.logInButton = this.Factory.CreateRibbonButton();
+            cubeGroup = this.Factory.CreateRibbonGroup();
+            cubeGroup.SuspendLayout();
             this.tab1.SuspendLayout();
             this.userGroup.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // cubeGroup
+            // 
+            cubeGroup.Items.Add(this.buttonCreateCube);
+            cubeGroup.Items.Add(this.buttonUpdateCube);
+            cubeGroup.Items.Add(this.buttonChangeCube);
+            cubeGroup.Label = "Работа с данными";
+            cubeGroup.Name = "cubeGroup";
+            // 
+            // buttonCreateCube
+            // 
+            this.buttonCreateCube.Label = "Создать куб";
+            this.buttonCreateCube.Name = "buttonCreateCube";
+            this.buttonCreateCube.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonCreateCube_Click);
+            // 
+            // buttonUpdateCube
+            // 
+            this.buttonUpdateCube.Label = "Обновить куб";
+            this.buttonUpdateCube.Name = "buttonUpdateCube";
+            this.buttonUpdateCube.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonUpdateCube_Click);
+            // 
+            // buttonChangeCube
+            // 
+            this.buttonChangeCube.Label = "Изменить куб";
+            this.buttonChangeCube.Name = "buttonChangeCube";
+            this.buttonChangeCube.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonChangeCube_Click);
             // 
             // tab1
             // 
             this.tab1.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
             this.tab1.Groups.Add(this.userGroup);
+            this.tab1.Groups.Add(cubeGroup);
             this.tab1.Label = "ComradewolfOLAP";
             this.tab1.Name = "tab1";
             // 
@@ -66,6 +99,8 @@
             this.RibbonType = "Microsoft.Excel.Workbook";
             this.Tabs.Add(this.tab1);
             this.Load += new Microsoft.Office.Tools.Ribbon.RibbonUIEventHandler(this.ComradewolfRibbon_Load);
+            cubeGroup.ResumeLayout(false);
+            cubeGroup.PerformLayout();
             this.tab1.ResumeLayout(false);
             this.tab1.PerformLayout();
             this.userGroup.ResumeLayout(false);
@@ -79,6 +114,9 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonTab tab1;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup userGroup;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton logInButton;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton buttonCreateCube;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton buttonUpdateCube;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton buttonChangeCube;
     }
 
     partial class ThisRibbonCollection
