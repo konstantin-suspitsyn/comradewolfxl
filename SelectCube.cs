@@ -27,9 +27,21 @@ namespace comradewolfxl
 
         }
 
-        private void buttonSelectCube_Click(object sender, EventArgs e)
+        private async void buttonSelectCube_Click(object sender, EventArgs e)
         {
+            string cube;
 
+            if (this.comboSelectCube.SelectedItem == null)
+            {
+                MessageBox.Show("Необходимо выбрать куб из выпадающего списка");
+                return;
+            }
+
+            cube = this.comboSelectCube.SelectedItem.ToString();
+
+            OlapFields frontFields = await httpUtils.GetFields(currentHost, cube, token);
+            this.Close();
+            // this.createSelectPanel(frontFields, cube);
         }
 
         private void checkCredentials()

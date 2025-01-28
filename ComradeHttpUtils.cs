@@ -1,16 +1,14 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.Http.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
+using Newtonsoft.Json.Linq;
 
 namespace comradewolfxl
 {
@@ -22,6 +20,7 @@ namespace comradewolfxl
         private const string TOKEN_LINK = "v1/user/authenticate";
         private const string AUTH_TOKEN_POSTFIX = "AUTH_TOKEN";
         private const string LIST_OF_ALLOWED_TABLES = "v1/cube/available";
+        private const string GET_OLAP_FIELDS = "v1/cube/{0}/front-fields";
 
         ComradeWolfUtils comradeWolfUtils;
 
@@ -134,7 +133,35 @@ namespace comradewolfxl
             return tokenFromBackend.access_token;
         }
 
+        internal async Task<OlapFields> GetFields(string currentHost, string cube, string token)
+        {
 
+            OlapFields frontFields = new OlapFields();
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await client.GetAsync(currentHost + string.Format(GET_OLAP_FIELDS, cube));
+            response.EnsureSuccessStatusCode();
+
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+
+            //JObject jsonObjects = (JObject)JsonConvert.DeserializeObject(responseBody);
+
+            Dictionary<string, List<OlapFieldsDTO>> values = JsonConvert.DeserializeObject<Dictionary<string, List<OlapFieldsDTO>>>(responseBody);
+
+
+            // Parse all fielsds
+            foreach (OlapFieldsDTO field in values["fields"])
+            {
+                OlapFieldsProperty olapFieldsProperty = new OlapFieldsProperty();
+                olapFieldsProperty.front_name = field.front_name;
+                olapFieldsProperty.data_type = field.data_type;
+                olapFieldsProperty.field_type = field.field_type;
+                frontFields.fields.Add(field.field_name, olapFieldsProperty);
+            }
+
+            return frontFields;
+        }
 
 
     }

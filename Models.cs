@@ -41,18 +41,30 @@ namespace comradewolfxl
         public OlapCube[] cubes { get; set; }
 }
 
+class OlapFieldsDTO
+    {
+        public OlapFieldsDTO() { }
+        public string data_type { get; set; }
+        public string field_type { get; set; }
+        public string front_name { get; set; }
+        public string field_name { get; set; }
+    }
+
 public class OlapFieldsProperty
     {
         public OlapFieldsProperty() { }
-        public string table_name { get; set; }
+        public string data_type { get; set; }
         public string field_type { get; set; }
-        public string alias { get; set; }
         public string front_name { get; set; }
     }
 
     class OlapFields
     {
-        public OlapFields() { }
+        public OlapFields() {
+            this.fields = new Dictionary<string, OlapFieldsProperty>();
+        }
+
+        public Dictionary<string, OlapFieldsProperty> fields { get; set; }
 
     }
 
