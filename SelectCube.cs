@@ -41,7 +41,14 @@ namespace comradewolfxl
 
             OlapFields frontFields = await httpUtils.GetFields(currentHost, cube, token);
             this.Close();
-            // this.createSelectPanel(frontFields, cube);
+
+            this.createSelectAndWherePanel(frontFields, cube, currentHost);
+        }
+
+        private void createSelectAndWherePanel(OlapFields frontFields, string cubeName, string currentHost)
+        {
+            SelectAndWhere selectAndWhere = new SelectAndWhere(frontFields, cubeName, currentHost);
+            selectAndWhere.Show();
         }
 
         private void checkCredentials()

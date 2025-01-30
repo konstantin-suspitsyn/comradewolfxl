@@ -136,6 +136,8 @@ namespace comradewolfxl
         internal async Task<OlapFields> GetFields(string currentHost, string cube, string token)
         {
 
+            // Returns front fields
+
             OlapFields frontFields = new OlapFields();
 
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);

@@ -283,6 +283,18 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SelectAndWhere.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SelectAndWhere.Designer.cs">
+      <DependentUpon>SelectAndWhere.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WhereItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WhereItem.Designer.cs">
+      <DependentUpon>WhereItem.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="ComradewolfRibbon.resx">
       <DependentUpon>ComradewolfRibbon.cs</DependentUpon>
     </EmbeddedResource>
@@ -298,8 +310,17 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="SelectAndWhere.resx">
+      <DependentUpon>SelectAndWhere.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SelectCube.resx">
       <DependentUpon>SelectCube.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectItemPiece.resx">
+      <DependentUpon>SelectItemPiece.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WhereItem.resx">
+      <DependentUpon>WhereItem.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="comradewolfxl_TemporaryKey.pfx" />
@@ -317,6 +338,12 @@
     </Compile>
     <Compile Include="SelectCube.Designer.cs">
       <DependentUpon>SelectCube.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SelectItemPiece.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SelectItemPiece.Designer.cs">
+      <DependentUpon>SelectItemPiece.cs</DependentUpon>
     </Compile>
     <Compile Include="ThisAddIn.cs">
       <SubType>Code</SubType>

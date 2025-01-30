@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 namespace comradewolfxl
 {
 
-    class TokenModel
+    public class TokenModel
     {
         public TokenModel() { }
         public string access_token { get; set; }
@@ -21,9 +21,9 @@ namespace comradewolfxl
         }
     }
 
-    
 
-    class OlapCube
+
+    public class OlapCube
     {
         public OlapCube() { }
         public int id { get; set; }
@@ -35,13 +35,13 @@ namespace comradewolfxl
         }
     }
 
-    class AvailableOlapCubes
+    public class AvailableOlapCubes
     {
         public AvailableOlapCubes() { }
         public OlapCube[] cubes { get; set; }
 }
 
-class OlapFieldsDTO
+public class OlapFieldsDTO
     {
         public OlapFieldsDTO() { }
         public string data_type { get; set; }
@@ -58,7 +58,7 @@ public class OlapFieldsProperty
         public string front_name { get; set; }
     }
 
-    class OlapFields
+ public class OlapFields
     {
         public OlapFields() {
             this.fields = new Dictionary<string, OlapFieldsProperty>();
@@ -66,9 +66,29 @@ public class OlapFieldsProperty
 
         public Dictionary<string, OlapFieldsProperty> fields { get; set; }
 
+
     }
 
+    public class Calculations
+    {
+        public Calculations() {
+            this.calculations = new Dictionary<string, string>();
 
+            this.calculations.Add("sum", "Сумма");
+            this.calculations.Add("count", "Количество");
+            this.calculations.Add("count_distinct", "Количество уникальных");
+            this.calculations.Add("min", "Минимум");
+            this.calculations.Add("max", "Максимум");
+            this.calculations.Add("avg", "Среднее");
+            this.calculations.Add("none", "Без вычислений");
+            this.calculations.Add("distinct", "Уникальные");
+
+        }
+
+        public Dictionary<string, string> calculations { get; set; }
+
+    }
+        
     internal class Models
     {
     }
