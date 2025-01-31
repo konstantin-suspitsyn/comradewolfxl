@@ -12,9 +12,20 @@ namespace comradewolfxl
 {
     public partial class WhereItem : UserControl
     {
-        public WhereItem()
+        int whereId;
+        OlapFields frontFields;
+        private WhereTypes whereTypes = new WhereTypes();
+
+        public WhereItem(int id, OlapFields frontFields)
         {
             InitializeComponent();
+            this.whereId = id;
+            this.frontFields = frontFields;
+        }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

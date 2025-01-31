@@ -29,11 +29,10 @@
         private void InitializeComponent()
         {
             this.addSelect = new System.Windows.Forms.Button();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.addWhere = new System.Windows.Forms.Button();
             this.createCube = new System.Windows.Forms.Button();
             this.selectPanel = new System.Windows.Forms.Panel();
-            this.groupBox2.SuspendLayout();
+            this.panelWhere = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
             // addSelect
@@ -46,24 +45,15 @@
             this.addSelect.UseVisualStyleBackColor = true;
             this.addSelect.Click += new System.EventHandler(this.addSelect_Click);
             // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.addWhere);
-            this.groupBox2.Location = new System.Drawing.Point(876, 13);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(297, 446);
-            this.groupBox2.TabIndex = 1;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "where";
-            // 
             // addWhere
             // 
-            this.addWhere.Location = new System.Drawing.Point(68, 76);
+            this.addWhere.Location = new System.Drawing.Point(862, 455);
             this.addWhere.Name = "addWhere";
-            this.addWhere.Size = new System.Drawing.Size(75, 23);
+            this.addWhere.Size = new System.Drawing.Size(146, 23);
             this.addWhere.TabIndex = 0;
-            this.addWhere.Text = "button3";
+            this.addWhere.Text = "Добавить where";
             this.addWhere.UseVisualStyleBackColor = true;
+            this.addWhere.Click += new System.EventHandler(this.addWhere_Click);
             // 
             // createCube
             // 
@@ -78,8 +68,15 @@
             // 
             this.selectPanel.Location = new System.Drawing.Point(12, 24);
             this.selectPanel.Name = "selectPanel";
-            this.selectPanel.Size = new System.Drawing.Size(736, 402);
+            this.selectPanel.Size = new System.Drawing.Size(654, 402);
             this.selectPanel.TabIndex = 3;
+            // 
+            // panelWhere
+            // 
+            this.panelWhere.Location = new System.Drawing.Point(690, 24);
+            this.panelWhere.Name = "panelWhere";
+            this.panelWhere.Size = new System.Drawing.Size(483, 402);
+            this.panelWhere.TabIndex = 4;
             // 
             // SelectAndWhere
             // 
@@ -88,22 +85,22 @@
             this.AutoScroll = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(1185, 554);
+            this.Controls.Add(this.panelWhere);
+            this.Controls.Add(this.addWhere);
             this.Controls.Add(this.selectPanel);
             this.Controls.Add(this.addSelect);
             this.Controls.Add(this.createCube);
-            this.Controls.Add(this.groupBox2);
             this.Name = "SelectAndWhere";
             this.Text = "SelectAndWhere";
-            this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-        private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button createCube;
         private System.Windows.Forms.Button addSelect;
         private System.Windows.Forms.Button addWhere;
         private System.Windows.Forms.Panel selectPanel;
+        private System.Windows.Forms.Panel panelWhere;
     }
 }

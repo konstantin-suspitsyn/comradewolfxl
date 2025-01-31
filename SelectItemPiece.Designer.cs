@@ -40,6 +40,7 @@
             this.selectItemBox.Name = "selectItemBox";
             this.selectItemBox.Size = new System.Drawing.Size(196, 21);
             this.selectItemBox.TabIndex = 0;
+            this.selectItemBox.SelectedIndexChanged += new System.EventHandler(this.selectItemBox_SelectedIndexChanged);
             // 
             // calculationType
             // 

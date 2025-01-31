@@ -14,6 +14,7 @@ namespace comradewolfxl
     {
 
         private const int heightOfSelectForm = 40;
+        private const int heightOfWhereForm = 150;
 
         OlapFields frontFields;
         string cubeName;
@@ -22,6 +23,7 @@ namespace comradewolfxl
         List<SelectItemPiece> selectItems;
         List<WhereItem> whereItems;
         int selectIndex = 0;
+        int whereIndex = 0;
 
 
         public SelectAndWhere(OlapFields frontFields, string cubeName, string currentHost)
@@ -31,7 +33,6 @@ namespace comradewolfxl
             this.cubeName = cubeName;
             this.currentHost = currentHost;
             this.comradeHttpUtils = new ComradeHttpUtils();
-            this.selectItems = new List<SelectItemPiece>();
             this.whereItems = new List<WhereItem>();
 
             // Добавляем скролл по вертикали
@@ -40,16 +41,23 @@ namespace comradewolfxl
             selectPanel.HorizontalScroll.Visible = false;
             selectPanel.HorizontalScroll.Maximum = 0;
             selectPanel.AutoScroll = true;
+
+            // Добавляем скролл по вертикали
+            panelWhere.AutoScroll = false;
+            panelWhere.HorizontalScroll.Enabled = false;
+            panelWhere.HorizontalScroll.Visible = false;
+            panelWhere.HorizontalScroll.Maximum = 0;
+            panelWhere.AutoScroll = true;
         }
 
         private void addSelect_Click(object sender, EventArgs e)
         {
             
             SelectItemPiece selectItemPiece = new SelectItemPiece(selectIndex, frontFields);
-            this.selectItems.Add(selectItemPiece);
             this.selectPanel.Controls.Add(selectItemPiece);
-            this.selectIndex++;
+            
             selectItemPiece.Location = new System.Drawing.Point(0, selectIndex * heightOfSelectForm);
+            this.selectIndex++;
 
 
         }
@@ -71,6 +79,15 @@ namespace comradewolfxl
                 i++;
             }
 
+        }
+
+        private void addWhere_Click(object sender, EventArgs e)
+        {
+            WhereItem whereItem = new WhereItem(whereIndex, frontFields);
+            this.panelWhere.Controls.Add(whereItem);
+            
+            whereItem.Location = new System.Drawing.Point(0, whereIndex * heightOfWhereForm);
+            whereIndex++;
         }
     }
 }

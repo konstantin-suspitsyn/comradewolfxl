@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace comradewolfxl
 {
@@ -85,10 +86,50 @@ public class OlapFieldsProperty
 
         }
 
-        public Dictionary<string, string> calculations { get; set; }
+        public Dictionary<string, string> calculations { get; private set; }
 
     }
-        
+
+    public class FieldDataTypes
+    {
+        public FieldDataTypes()
+        {
+            this.fieldTypes = new Dictionary<string, string>();
+            this.fieldTypes.Add("DATE", "date");
+            this.fieldTypes.Add("NUMBER", "number");
+            this.fieldTypes.Add("DATETIME", "datetime");
+            this.fieldTypes.Add("BOOLEAN", "boolean");
+            this.fieldTypes.Add("TEXT", "text");
+
+    }
+
+        public Dictionary <string, string> fieldTypes { get; private set; }
+    }
+
+    public class WhereTypes
+    {
+        public WhereTypes() { 
+            this.where = new Dictionary<string, string>();
+
+            this.where.Add(">", ">");
+            this.where.Add(">=", ">=");
+            this.where.Add("<", "<");
+            this.where.Add("<=", "<=");
+            this.where.Add("В списке", "IN");
+            this.where.Add("Не в списке", "NOT IN");
+            this.where.Add("Meжду", "BETWEEN");
+            this.where.Add("=", "=");
+            this.where.Add("<>", "<>");
+            this.where.Add("Содержит", "LIKE");
+            this.where.Add("Начинается с", "LIKE");
+            this.where.Add("Заканчивается на", "LIKE");
+
+
+        }
+
+        public Dictionary<string, string> where { get; private set; }
+    }
+
     internal class Models
     {
     }
