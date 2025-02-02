@@ -41,7 +41,7 @@ namespace comradewolfxl
         private void deleteButton_Click(object sender, EventArgs e)
         {
             SelectAndWhere selectAndWhere = (SelectAndWhere)ParentForm;
-            selectAndWhere.DeleteButtonAndUpdateAll(this.selectId);
+            selectAndWhere.DeleteSelectAndUpdateAll(this.selectId);
         }
 
         public void UpdateId(int id) { 

@@ -14,7 +14,7 @@ namespace comradewolfxl
     {
 
         private const int heightOfSelectForm = 40;
-        private const int heightOfWhereForm = 150;
+        private const int heightOfWhereForm = 70;
 
         OlapFields frontFields;
         string cubeName;
@@ -62,7 +62,7 @@ namespace comradewolfxl
 
         }
 
-        public void DeleteButtonAndUpdateAll(int id)
+        public void DeleteSelectAndUpdateAll(int id)
         {
             this.selectPanel.Controls.RemoveAt(id);
             this.selectIndex--;
@@ -74,7 +74,26 @@ namespace comradewolfxl
                 if (i >= id)
                 {
                     selectItemPiece.UpdateId(i);
-                    selectItemPiece.Location = new System.Drawing.Point(0, (i+1) * heightOfSelectForm);
+                    selectItemPiece.Location = new System.Drawing.Point(0, (i) * heightOfSelectForm);
+                }
+                i++;
+            }
+
+        }
+
+        public void DeleteWhereAndUpdateAll(int id)
+        {
+            this.panelWhere.Controls.RemoveAt(id);
+            this.whereIndex--;
+
+            int i = 0;
+
+            foreach (WhereItem whereItem in this.panelWhere.Controls)
+            {
+                if (i >= id)
+                {
+                    whereItem.UpdateId(i);
+                    whereItem.Location = new System.Drawing.Point(0, (i) * heightOfWhereForm);
                 }
                 i++;
             }

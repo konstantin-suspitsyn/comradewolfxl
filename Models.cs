@@ -118,8 +118,8 @@ public class OlapFieldsProperty
             this.where.Add("В списке", "IN");
             this.where.Add("Не в списке", "NOT IN");
             this.where.Add("Meжду", "BETWEEN");
-            this.where.Add("=", "=");
-            this.where.Add("<>", "<>");
+            this.where.Add("Равно", "=");
+            this.where.Add("Не равно", "<>");
             this.where.Add("Содержит", "LIKE");
             this.where.Add("Начинается с", "LIKE");
             this.where.Add("Заканчивается на", "LIKE");
