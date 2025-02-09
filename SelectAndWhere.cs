@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection.Emit;
 using System.Windows.Forms;
+using Microsoft.Office.Interop.Excel;
 
 namespace comradewolfxl
 {
@@ -16,6 +12,16 @@ namespace comradewolfxl
         private const int heightOfSelectForm = 40;
         private const int heightOfWhereForm = 70;
 
+        private const int WHERE_FRONT_ROW_NO = 1;
+        private const int WHERE_BACK_ROW_NO = 2;
+        private const int WHERE_TYPE_ROW_NO = 3;
+        private const int WHERE_CONDITION_1_ROW_NO = 4;
+        private const int WHERE_CONDITION_2_ROW_NO = 5;
+        private const int SELECT_FRONT_ROW_NO = 6;
+        private const int SELECT_BACK_ROW_NO = 7;
+        private const int SELECT_CALCULATION_ROW_NO = 8;
+
+
         OlapFields frontFields;
         string cubeName;
         string currentHost;
@@ -24,6 +30,8 @@ namespace comradewolfxl
         List<WhereItem> whereItems;
         int selectIndex = 0;
         int whereIndex = 0;
+        Calculations calculations;
+        WhereTypes whereTypes;
 
 
         public SelectAndWhere(OlapFields frontFields, string cubeName, string currentHost)
@@ -34,6 +42,8 @@ namespace comradewolfxl
             this.currentHost = currentHost;
             this.comradeHttpUtils = new ComradeHttpUtils();
             this.whereItems = new List<WhereItem>();
+            this.calculations = new Calculations();
+            whereTypes = new WhereTypes();
 
             // Добавляем скролл по вертикали
             selectPanel.AutoScroll = false;
@@ -107,6 +117,59 @@ namespace comradewolfxl
             
             whereItem.Location = new System.Drawing.Point(0, whereIndex * heightOfWhereForm);
             whereIndex++;
+        }
+
+        private void createCube_Click(object sender, EventArgs e)
+        {
+            // TODO: Make form to use current worksheet or create new
+            // Now we create new worksheet
+            Workbook wb = (Workbook) Globals.ThisAddIn.Application.ActiveWorkbook;
+            var worksheet = (Worksheet)wb.Worksheets.Add();
+
+            Worksheet activeWs = Globals.ThisAddIn.Application.ActiveSheet;
+            MessageBox.Show(activeWs.Name);
+
+            int startingSelectVal = 1;
+
+            foreach (SelectItemPiece selectItemPiece in this.selectPanel.Controls)
+            {
+                MessageBox.Show(selectItemPiece.getSelectedItem());
+                // DO SMTH
+                string tempFrontendName = selectItemPiece.getSelectedItem();
+                string tempCalculation = selectItemPiece.getCalculation();
+
+                string backendName = this.frontFields.getBackendNameByFrontend(tempFrontendName);
+                string backendCalculation = this.calculations.getCalculationKeyByValue(tempCalculation);
+
+                activeWs.Cells[SELECT_FRONT_ROW_NO, startingSelectVal].Value = tempFrontendName;
+                activeWs.Cells[SELECT_BACK_ROW_NO, startingSelectVal].Value = backendName;
+                activeWs.Cells[SELECT_CALCULATION_ROW_NO, startingSelectVal].Value = backendCalculation;
+
+                startingSelectVal++;
+            }
+
+            int startingWhereVal = 1;
+
+            foreach (WhereItem whereItem in this.panelWhere.Controls)
+            {
+                
+                string tempFrontWhere = whereItem.getWhereItem();
+                string tempWhereType = whereItem.getWhereType();
+                string tempCond1 = whereItem.getWhereCondition1();
+                string tempCond2 = whereItem.getWhereCondition2();
+                string backendNameTemp = this.frontFields.getBackendNameByFrontend(tempFrontWhere);
+
+                string whereType = this.whereTypes.where[tempWhereType];
+
+                activeWs.Cells[WHERE_FRONT_ROW_NO, startingWhereVal].Value = tempFrontWhere;
+                activeWs.Cells[WHERE_BACK_ROW_NO, startingWhereVal].Value = backendNameTemp;
+                activeWs.Cells[WHERE_TYPE_ROW_NO, startingWhereVal].Value = whereType;
+                activeWs.Cells[WHERE_CONDITION_2_ROW_NO, startingWhereVal].Value = tempCond2;
+                activeWs.Cells[WHERE_CONDITION_1_ROW_NO, startingWhereVal].Value = tempCond1;
+
+                startingWhereVal++;
+            }
+
         }
     }
 }

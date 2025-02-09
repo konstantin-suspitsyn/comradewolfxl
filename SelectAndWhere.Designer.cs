@@ -57,12 +57,13 @@
             // 
             // createCube
             // 
-            this.createCube.Location = new System.Drawing.Point(477, 499);
+            this.createCube.Location = new System.Drawing.Point(552, 502);
             this.createCube.Name = "createCube";
             this.createCube.Size = new System.Drawing.Size(75, 23);
             this.createCube.TabIndex = 2;
-            this.createCube.Text = "button1";
+            this.createCube.Text = "Ok";
             this.createCube.UseVisualStyleBackColor = true;
+            this.createCube.Click += new System.EventHandler(this.createCube_Click);
             // 
             // selectPanel
             // 

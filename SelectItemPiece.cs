@@ -48,6 +48,11 @@ namespace comradewolfxl
             this.selectId = id; 
         }
 
+        public string getSelectedItem()
+        {
+            return this.selectItemBox.SelectedItem.ToString();
+        }
+
         private void selectItemBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             foreach (KeyValuePair<string, OlapFieldsProperty> field in this.frontFields.fields)
@@ -108,6 +113,11 @@ namespace comradewolfxl
             this.calculationType.Items.Add(this.calculations.calculations["count_distinct"]);
             this.calculationType.Items.Add(this.calculations.calculations["distinct"]);
 
+        }
+
+        internal string getCalculation()
+        {
+            return this.calculationType.SelectedItem.ToString();
         }
     }
 }

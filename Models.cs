@@ -67,6 +67,19 @@ public class OlapFieldsProperty
 
         public Dictionary<string, OlapFieldsProperty> fields { get; set; }
 
+        public string getBackendNameByFrontend(string frontendName)
+        {
+            foreach(KeyValuePair<string, OlapFieldsProperty> property in this.fields)
+            {
+                if (property.Value.front_name == frontendName)
+                {
+                    return property.Key;
+                }
+            }
+
+            throw new Exception("No such field");
+            
+        }
 
     }
 
@@ -87,6 +100,17 @@ public class OlapFieldsProperty
         }
 
         public Dictionary<string, string> calculations { get; private set; }
+
+        public string getCalculationKeyByValue(string value) { 
+            foreach(string key in this.calculations.Keys)
+            {
+                if (this.calculations[key]==value)
+                {
+                    return key;
+                }
+            }
+            throw new Exception("No such calculation");
+        }
 
     }
 

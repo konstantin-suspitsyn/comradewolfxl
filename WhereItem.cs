@@ -152,6 +152,25 @@ namespace comradewolfxl
         {
             this.whereId = i;
         }
+
+        internal string getWhereItem()
+        {
+            return this.whereField.SelectedItem.ToString();
+        }
+        internal string getWhereType()
+        {
+            return this.whereType.SelectedItem.ToString();
+        }
+
+        internal string getWhereCondition1()
+        {
+            return this.textBox1.Text.ToString();
+        }
+
+        internal string getWhereCondition2()
+        {
+            return this.textBox2.Text.ToString();
+        }
     }
 
 
