@@ -42,7 +42,60 @@ namespace comradewolfxl
         public OlapCube[] cubes { get; set; }
 }
 
-public class OlapFieldsDTO
+    public class SelectDTO
+    {
+        public string field_name { get; set; }
+
+        public SelectDTO(string field_name)
+        {
+            this.field_name = field_name;
+        }
+    }
+
+    public class CalculationDTO
+    {
+        public string field_name { get; set; }
+        public string calculation { get; set; }
+
+        public CalculationDTO(string field_name, string calculation)
+        {
+            this.field_name = field_name;
+            this.calculation = calculation;
+        } 
+    }
+
+    public class WhereDTO
+    {
+        public string field_name { get; private set; }
+        public string where { get; private set; }
+        public object condition { get; private set; } // string or list of strings
+
+        public WhereDTO(string field_name, string where, string condition)
+        {
+            this.field_name = field_name;
+            this.where = where;
+            this.condition = condition;
+        }
+
+        public WhereDTO(string field_name, string where, List<string> condition)
+        {
+            this.field_name = field_name;
+            this.where = where;
+            if (condition.Count != 2)
+            {
+                throw new Exception("Список должен содержать 2 строки");
+            }
+            this.condition = condition;
+        }
+
+    }
+
+    public class FrontFieldsQueryDTO
+    {
+
+    }
+
+    public class OlapFieldsDTO
     {
         public OlapFieldsDTO() { }
         public string data_type { get; set; }

@@ -123,11 +123,15 @@ namespace comradewolfxl
         {
             // TODO: Make form to use current worksheet or create new
             // Now we create new worksheet
-            Workbook wb = (Workbook) Globals.ThisAddIn.Application.ActiveWorkbook;
+            Workbook wb = (Workbook)Globals.ThisAddIn.Application.ActiveWorkbook;
             var worksheet = (Worksheet)wb.Worksheets.Add();
 
             Worksheet activeWs = Globals.ThisAddIn.Application.ActiveSheet;
             MessageBox.Show(activeWs.Name);
+
+            List<SelectDTO> selectList = new List<SelectDTO>();
+            List<CalculationDTO > calculationList = new List<CalculationDTO>();
+            List<WhereDTO> whereList = new List<WhereDTO>();
 
             int startingSelectVal = 1;
 
@@ -144,6 +148,14 @@ namespace comradewolfxl
                 activeWs.Cells[SELECT_FRONT_ROW_NO, startingSelectVal].Value = tempFrontendName;
                 activeWs.Cells[SELECT_BACK_ROW_NO, startingSelectVal].Value = backendName;
                 activeWs.Cells[SELECT_CALCULATION_ROW_NO, startingSelectVal].Value = backendCalculation;
+
+                if (backendCalculation == "None")
+                {
+                    selectList.Add(new SelectDTO(backendName));
+                } else
+                {
+                    calculationList.Add(new CalculationDTO(backendName, backendCalculation));
+                }
 
                 startingSelectVal++;
             }
@@ -168,8 +180,24 @@ namespace comradewolfxl
                 activeWs.Cells[WHERE_CONDITION_1_ROW_NO, startingWhereVal].Value = tempCond1;
 
                 startingWhereVal++;
+                if (whereType == "Between")
+                {
+                    List<string> betweenCond = new List<string>();
+                    betweenCond.Add(tempCond1);
+                    betweenCond.Add(tempCond2);
+                    whereList.Add(new WhereDTO(backendNameTemp, whereType, betweenCond));
+                } else
+                {
+                    whereList.Add(new WhereDTO(backendNameTemp, whereType, tempCond1));
+                }
+                
             }
+            this.getDataFromOLAP(selectList, calculationList, whereList);
+        }
 
+        public void getDataFromOLAP(List<SelectDTO> selectList, List<CalculationDTO> calculationList, List<WhereDTO> whereList)
+        {
+            throw new NotImplementedException();
         }
     }
 }

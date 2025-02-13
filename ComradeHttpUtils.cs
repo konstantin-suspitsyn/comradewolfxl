@@ -165,6 +165,12 @@ namespace comradewolfxl
             return frontFields;
         }
 
+        public string GenerateJsonToBackend(List<SelectDTO> selectList, List<CalculationDTO> calculationList, List<WhereDTO> whereList)
+        {
+            throw new NotImplementedException();
+
+        }
+
 
     }
 }
