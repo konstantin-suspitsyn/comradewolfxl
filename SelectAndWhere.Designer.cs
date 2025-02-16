@@ -63,7 +63,7 @@
             this.createCube.TabIndex = 2;
             this.createCube.Text = "Ok";
             this.createCube.UseVisualStyleBackColor = true;
-            this.createCube.Click += new System.EventHandler(this.createCube_Click);
+            this.createCube.Click += new System.EventHandler(this.createCube_ClickAsync);
             // 
             // selectPanel
             // 

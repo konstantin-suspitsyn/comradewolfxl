@@ -105,6 +105,7 @@ namespace comradewolfxl
                 this.СheckHost();
             }
 
+            // TODO REFACTOR REPEATED CODE
             // check for credentials
             string currentToken = wolfUtils.ReadFromRegistry(httpUtils.GetAuthPostfix() + currentHost, null);
 

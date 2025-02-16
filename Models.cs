@@ -90,9 +90,11 @@ namespace comradewolfxl
 
     }
 
-    public class FrontFieldsQueryDTO
+    public class QueryInfoDTO
     {
-
+        public long id { get; set; }
+        public int pages { get; set; }
+        public int items_per_page { get; set; }
     }
 
     public class OlapFieldsDTO
@@ -134,6 +136,18 @@ public class OlapFieldsProperty
             
         }
 
+        internal string getFieldTypeByFrontend(string frontendName)
+        {
+            foreach (KeyValuePair<string, OlapFieldsProperty> property in this.fields)
+            {
+                if (property.Value.front_name == frontendName)
+                {
+                    return property.Value.data_type;
+                }
+            }
+
+            throw new Exception("No such field");
+        }
     }
 
     public class Calculations

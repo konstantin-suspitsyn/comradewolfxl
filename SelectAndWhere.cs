@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection.Emit;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Office.Interop.Excel;
+using Workbook = Microsoft.Office.Interop.Excel.Workbook;
+using Worksheet = Microsoft.Office.Interop.Excel.Worksheet;
 
 namespace comradewolfxl
 {
@@ -20,6 +21,9 @@ namespace comradewolfxl
         private const int SELECT_FRONT_ROW_NO = 6;
         private const int SELECT_BACK_ROW_NO = 7;
         private const int SELECT_CALCULATION_ROW_NO = 8;
+
+
+        private const string FIELD_NAME_WITH_CALC = "{0}__{1}";
 
 
         OlapFields frontFields;
@@ -119,12 +123,15 @@ namespace comradewolfxl
             whereIndex++;
         }
 
-        private void createCube_Click(object sender, EventArgs e)
+        private async void createCube_ClickAsync(object sender, EventArgs e)
         {
             // TODO: Make form to use current worksheet or create new
             // Now we create new worksheet
             Workbook wb = (Workbook)Globals.ThisAddIn.Application.ActiveWorkbook;
             var worksheet = (Worksheet)wb.Worksheets.Add();
+
+            // Ordered list of all selected and calculated objects with types
+            List<KeyValuePair<string, string>> itemsToBeConverted = new List<KeyValuePair<string, string>>();
 
             Worksheet activeWs = Globals.ThisAddIn.Application.ActiveSheet;
             MessageBox.Show(activeWs.Name);
@@ -144,17 +151,24 @@ namespace comradewolfxl
 
                 string backendName = this.frontFields.getBackendNameByFrontend(tempFrontendName);
                 string backendCalculation = this.calculations.getCalculationKeyByValue(tempCalculation);
+                string backendType = this.frontFields.getFieldTypeByFrontend(tempFrontendName);
 
                 activeWs.Cells[SELECT_FRONT_ROW_NO, startingSelectVal].Value = tempFrontendName;
                 activeWs.Cells[SELECT_BACK_ROW_NO, startingSelectVal].Value = backendName;
                 activeWs.Cells[SELECT_CALCULATION_ROW_NO, startingSelectVal].Value = backendCalculation;
 
-                if (backendCalculation == "None")
+
+                if (backendCalculation == "none")
                 {
                     selectList.Add(new SelectDTO(backendName));
-                } else
+                    itemsToBeConverted.Add(new KeyValuePair<string, string> (backendName, backendType ));
+
+                }
+                else
                 {
                     calculationList.Add(new CalculationDTO(backendName, backendCalculation));
+                    itemsToBeConverted.Add(new KeyValuePair<string, string> (string.Format(FIELD_NAME_WITH_CALC, backendName, backendCalculation), "number" ));
+
                 }
 
                 startingSelectVal++;
@@ -179,8 +193,9 @@ namespace comradewolfxl
                 activeWs.Cells[WHERE_CONDITION_2_ROW_NO, startingWhereVal].Value = tempCond2;
                 activeWs.Cells[WHERE_CONDITION_1_ROW_NO, startingWhereVal].Value = tempCond1;
 
+
                 startingWhereVal++;
-                if (whereType == "Between")
+                if (whereType == "between")
                 {
                     List<string> betweenCond = new List<string>();
                     betweenCond.Add(tempCond1);
@@ -192,12 +207,56 @@ namespace comradewolfxl
                 }
                 
             }
-            this.getDataFromOLAP(selectList, calculationList, whereList);
+            await this.getDataFromOLAPAsync(selectList, calculationList, whereList, itemsToBeConverted);
+
         }
 
-        public void getDataFromOLAP(List<SelectDTO> selectList, List<CalculationDTO> calculationList, List<WhereDTO> whereList)
+        public async Task getDataFromOLAPAsync(List<SelectDTO> selectList, List<CalculationDTO> calculationList, List<WhereDTO> whereList, List<KeyValuePair<string, string>> itemsToBeConverted)
         {
-            throw new NotImplementedException();
+
+            Worksheet activeWs = Globals.ThisAddIn.Application.ActiveSheet;
+
+            QueryInfoDTO queryInfoDTO = await comradeHttpUtils.GetQueryInfo(selectList, calculationList, whereList, this.currentHost, this.cubeName);
+            int pages = queryInfoDTO.pages;
+            int itemsPerPage = queryInfoDTO.items_per_page;
+            long queryId = queryInfoDTO.id;
+
+            int rowNo = 12;
+
+            
+
+            for (int pageNo = 0; pageNo < pages; pageNo++)
+            {
+
+                List<Dictionary<string, object>> dataFromOLAP = await comradeHttpUtils.GetPageOfDataFromOlap(currentHost, cubeName, queryId, pageNo);
+                
+                int bulkRows = dataFromOLAP.Count;
+                int bulkColumns = itemsToBeConverted.Count;
+
+                var startCell = (Microsoft.Office.Interop.Excel.Range)activeWs.Cells[rowNo - 12 + 1, 1];
+
+                // BulkInsert https://brandewinder.com/2010/10/17/Write-data-to-an-Excel-worksheet-with-C-fast/
+                var bulkData = new object[bulkColumns, bulkRows];
+                foreach (Dictionary<string, object> row in dataFromOLAP)
+                {
+                    int columnNo = 0;
+
+                    foreach(KeyValuePair<string, string> item in itemsToBeConverted)
+                    {
+                        bulkData[columnNo, rowNo - 12 - pageNo * itemsPerPage ] = row[item.Key];
+
+                        columnNo++;
+                    }
+                    rowNo++;
+                }
+
+                var endCell = (Microsoft.Office.Interop.Excel.Range)activeWs.Cells[rowNo, itemsToBeConverted.Count];
+                var writeRange = activeWs.Range[startCell, endCell];
+
+                writeRange.Value2 = bulkData;
+            }
+
+            MessageBox.Show("Done");
         }
     }
 }

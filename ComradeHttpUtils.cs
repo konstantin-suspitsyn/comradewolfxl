@@ -9,6 +9,8 @@ using System.Net.Http.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
+using System.Text;
+using System.Text.Json.Nodes;
 
 namespace comradewolfxl
 {
@@ -21,6 +23,8 @@ namespace comradewolfxl
         private const string AUTH_TOKEN_POSTFIX = "AUTH_TOKEN";
         private const string LIST_OF_ALLOWED_TABLES = "v1/cube/available";
         private const string GET_OLAP_FIELDS = "v1/cube/{0}/front-fields";
+        private const string GET_QUERY_DATA = "v1/cube/{0}/query_info";
+        private const string GET_ONE_PAGE = "v1/cube/{0}/query_id/{1}?page={2}";
 
         ComradeWolfUtils comradeWolfUtils;
 
@@ -165,12 +169,114 @@ namespace comradewolfxl
             return frontFields;
         }
 
-        public string GenerateJsonToBackend(List<SelectDTO> selectList, List<CalculationDTO> calculationList, List<WhereDTO> whereList)
+        public async Task<QueryInfoDTO> GetQueryInfo(List<SelectDTO> selectList, List<CalculationDTO> calculationList, List<WhereDTO> whereList, string host, string cube)
         {
-            throw new NotImplementedException();
+
+            string jsonPayload = createJSONPayloadForOLAP(selectList, calculationList, whereList);
+            QueryInfoDTO queryInfoDTO = await this.getQueryInfo(host, jsonPayload, cube);
+
+            return queryInfoDTO;
+
 
         }
 
+        public async Task<List<Dictionary<string, object>>> GetPageOfDataFromOlap(string host, string cubeName, long queryId, int pageNo)
+        {
+            string token = GetTokenForHost(host);
+            string completeUrl = host + string.Format(GET_ONE_PAGE, cubeName, queryId, pageNo);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await client.GetAsync(completeUrl);
+            response.EnsureSuccessStatusCode();
+
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            List<Dictionary<string, object>> responsePreConvert = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(responseBody);
+
+            return responsePreConvert;
+        }
+
+        public async Task<QueryInfoDTO> getQueryInfo(string host, string postJson, string cube)
+        {
+            string token = GetTokenForHost(host);
+
+            var jsonBody = new StringContent(postJson, Encoding.UTF8, "application/json");
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await client.PostAsync(host + string.Format(GET_QUERY_DATA, cube), jsonBody);
+            response.EnsureSuccessStatusCode();
+
+            string responseBody = await response.Content.ReadAsStringAsync();
+            QueryInfoDTO tokenFromBackend
+                = JsonConvert.DeserializeObject<QueryInfoDTO>(responseBody);
+
+            return tokenFromBackend;
+
+
+        }
+
+        public string createJSONPayloadForOLAP(List<SelectDTO> selectList, List<CalculationDTO> calculationList, List<WhereDTO> whereList)
+        {
+            Dictionary<string, List<SelectDTO>> selectPayload = this.createSelectPayloadDictionary(selectList);
+            Dictionary<string, List<CalculationDTO>> calculationPayload = this.createCalculationPayload(calculationList);
+            Dictionary<string, List<WhereDTO>> wherePayload = this.createWherePayload(whereList);
+
+            string s1 = JsonConvert.SerializeObject(selectPayload);
+            s1 = s1.Remove(s1.Length - 1);
+            string s2 = JsonConvert.SerializeObject(calculationPayload).Remove(0, 1);
+            s2 = s2.Remove(s2.Length - 1);
+            string s3 = JsonConvert.SerializeObject(wherePayload);
+            s3 = s3.Remove(0, 1);
+
+            string result = s1 + ", " + s2 + ", " + s3;
+            return result;
+
+        }
+
+        public Dictionary<string, List<SelectDTO>> createSelectPayloadDictionary(List<SelectDTO> selectList)
+        {
+            Dictionary<string, List<SelectDTO>> selectPayload = new Dictionary<string, List<SelectDTO>>();
+            selectPayload.Add("SELECT", selectList);
+            return selectPayload;
+        }
+
+        public Dictionary<string, List<CalculationDTO>> createCalculationPayload(List<CalculationDTO> calculationList)
+        {
+            Dictionary<string, List<CalculationDTO>> calculationPayload = new Dictionary<string, List<CalculationDTO>>();
+            calculationPayload.Add("CALCULATION", calculationList);
+            return calculationPayload;
+        }
+
+        public Dictionary<string, List<WhereDTO>> createWherePayload(List<WhereDTO> whereList)
+        {
+            Dictionary<string, List<WhereDTO>> where = new Dictionary<string, List<WhereDTO>>();
+            where.Add("WHERE", whereList);
+            return where;
+        }
+
+        public string GetTokenForHost(string currentHost)
+        {
+
+
+            // check for credentials
+            string currentToken = comradeWolfUtils.ReadFromRegistry(this.GetAuthPostfix() + currentHost, null);
+
+
+            if ((currentToken == null) || (!this.IsTokenValid(currentToken)))
+            {
+                // if not then open login form
+                MessageBox.Show("Необходимо залогиниться");
+                LoginForm loginForm = new LoginForm();
+                if (loginForm.ShowDialog() == DialogResult.OK)
+                {
+                    MessageBox.Show("Тута");
+
+                }
+
+            }
+
+
+            return currentToken;
+        }
 
     }
 }
