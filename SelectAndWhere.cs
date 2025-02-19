@@ -233,17 +233,17 @@ namespace comradewolfxl
                 int bulkRows = dataFromOLAP.Count;
                 int bulkColumns = itemsToBeConverted.Count;
 
-                var startCell = (Microsoft.Office.Interop.Excel.Range)activeWs.Cells[rowNo - 12 + 1, 1];
+                var startCell = (Microsoft.Office.Interop.Excel.Range)activeWs.Cells[rowNo + 1, 1];
 
                 // BulkInsert https://brandewinder.com/2010/10/17/Write-data-to-an-Excel-worksheet-with-C-fast/
-                var bulkData = new object[bulkColumns, bulkRows];
+                var bulkData = new object[bulkRows, bulkColumns];
                 foreach (Dictionary<string, object> row in dataFromOLAP)
                 {
                     int columnNo = 0;
 
                     foreach(KeyValuePair<string, string> item in itemsToBeConverted)
                     {
-                        bulkData[columnNo, rowNo - 12 - pageNo * itemsPerPage ] = row[item.Key];
+                        bulkData[rowNo - 12 - pageNo * itemsPerPage, columnNo] = row[item.Key];
 
                         columnNo++;
                     }
@@ -251,9 +251,9 @@ namespace comradewolfxl
                 }
 
                 var endCell = (Microsoft.Office.Interop.Excel.Range)activeWs.Cells[rowNo, itemsToBeConverted.Count];
-                var writeRange = activeWs.Range[startCell, endCell];
+                var writeRange = activeWs.get_Range(startCell, endCell);
 
-                writeRange.Value2 = bulkData;
+                writeRange.Value = bulkData;
             }
 
             MessageBox.Show("Done");
