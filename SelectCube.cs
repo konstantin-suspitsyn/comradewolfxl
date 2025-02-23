@@ -14,6 +14,7 @@ namespace comradewolfxl
     {
         ComradeWolfUtils wolfUtils;
         ComradeHttpUtils httpUtils;
+        SelectAndWhere selectAndWhere;
 
         string token = null;
         string currentHost = null;
@@ -47,8 +48,14 @@ namespace comradewolfxl
 
         private void createSelectAndWherePanel(OlapFields frontFields, string cubeName, string currentHost)
         {
-            SelectAndWhere selectAndWhere = new SelectAndWhere(frontFields, cubeName, currentHost);
-            selectAndWhere.Show();
+            this.selectAndWhere = new SelectAndWhere(frontFields, cubeName, currentHost);
+            selectAndWhere.ShowDialog();
+            this.Close();
+        }
+
+        public void closeSelectAndWhereForm()
+        {
+            this.selectAndWhere.Close();
         }
 
         private void checkCredentials()

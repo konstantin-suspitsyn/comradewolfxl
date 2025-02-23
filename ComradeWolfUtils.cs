@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Microsoft.Office.Interop.Excel;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +13,26 @@ namespace comradewolfxl
 {
     internal class ComradeWolfUtils
     {
+
+        private const int heightOfSelectForm = 40;
+        private const int heightOfWhereForm = 70;
+
+        private const int HOST_ADDRESS = 1;
+        private const int OLAP_CUBE_NAME = 2;
+
+        private const int WHERE_FRONT_ROW_NO = 3;
+        private const int WHERE_BACK_ROW_NO = 4;
+        private const int WHERE_TYPE_ROW_NO = 5;
+        private const int WHERE_CONDITION_1_ROW_NO = 6;
+        private const int WHERE_CONDITION_2_ROW_NO = 7;
+        private const int SELECT_FRONT_ROW_NO = 8;
+        private const int SELECT_BACK_ROW_NO = 9;
+        private const int SELECT_CALCULATION_ROW_NO = 10;
+
+
+        private const int HEADER_ROW_NO = 12;
+
+
         private const string REGISTRY_PATH = @"Comradewolf\Comradewolf\XLaddin";
 
         // В файле хранится список хостов бэкенда
@@ -163,8 +184,75 @@ namespace comradewolfxl
             }
         }
 
-        
+        internal void updateOLAPData()
+        {
 
+            Workbook wb = (Workbook)Globals.ThisAddIn.Application.ActiveWorkbook;
+
+            Worksheet activeWs = Globals.ThisAddIn.Application.ActiveSheet;
+
+            string olapCubeName;
+            string hostName;
+
+            List<SelectDTO> selectList = new List<SelectDTO>();
+            List<CalculationDTO> calculationList = new List<CalculationDTO>();
+            List<WhereDTO> whereList = new List<WhereDTO>();
+
+            if (activeWs.Cells[1, 1].Value==null)
+            {
+                MessageBox.Show("Хост отсутствует");
+                return;
+            }
+
+            hostName = activeWs.Cells[1, 1].Value;
+
+
+            if (activeWs.Cells[2, 1].Value == null)
+            {
+                MessageBox.Show("Куб отсутствует");
+                return;
+            }
+
+            olapCubeName = activeWs.Cells[2, 1].Value;
+
+
+
+            MessageBox.Show(olapCubeName);
+            MessageBox.Show(hostName);
+
+            // TODO: все, что формирует списки в отдельный метод
+
+            // SELECT AND CALCULATION
+            for (int i=1; i<1000; i++)
+            {
+                if (activeWs.Cells[SELECT_BACK_ROW_NO, i].Value == null)
+                {
+                    break;
+                }
+
+                if (activeWs.Cells[SELECT_CALCULATION_ROW_NO, i].Value == "none")
+                {
+                    selectList.Add(new SelectDTO(activeWs.Cells[SELECT_BACK_ROW_NO, i].Value));
+                } else
+                {
+                    calculationList.Add(new CalculationDTO(activeWs.Cells[SELECT_BACK_ROW_NO, i].Value, activeWs.Cells[SELECT_CALCULATION_ROW_NO, i].Value));
+                }
+
+            }
+
+            // WHERE
+            for (int i = 1; i < 1000; i++)
+            {
+                if (activeWs.Cells[WHERE_BACK_ROW_NO, i] == null)
+                {
+                    break;
+                }
+
+                //TODO: ADD WHERE
+
+            }
+
+        }
     }
 
     public class Entry

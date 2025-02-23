@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Office.Interop.Excel;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,14 +14,20 @@ namespace comradewolfxl
         private const int heightOfSelectForm = 40;
         private const int heightOfWhereForm = 70;
 
-        private const int WHERE_FRONT_ROW_NO = 1;
-        private const int WHERE_BACK_ROW_NO = 2;
-        private const int WHERE_TYPE_ROW_NO = 3;
-        private const int WHERE_CONDITION_1_ROW_NO = 4;
-        private const int WHERE_CONDITION_2_ROW_NO = 5;
-        private const int SELECT_FRONT_ROW_NO = 6;
-        private const int SELECT_BACK_ROW_NO = 7;
-        private const int SELECT_CALCULATION_ROW_NO = 8;
+        private const int HOST_ADDRESS = 1;
+        private const int OLAP_CUBE_NAME = 2;
+
+        private const int WHERE_FRONT_ROW_NO = 3;
+        private const int WHERE_BACK_ROW_NO = 4;
+        private const int WHERE_TYPE_ROW_NO = 5;
+        private const int WHERE_CONDITION_1_ROW_NO = 6;
+        private const int WHERE_CONDITION_2_ROW_NO = 7;
+        private const int SELECT_FRONT_ROW_NO = 8;
+        private const int SELECT_BACK_ROW_NO = 9;
+        private const int SELECT_CALCULATION_ROW_NO = 10;
+
+
+        private const int HEADER_ROW_NO = 12;
 
 
         private const string FIELD_NAME_WITH_CALC = "{0}__{1}";
@@ -125,6 +132,7 @@ namespace comradewolfxl
 
         private async void createCube_ClickAsync(object sender, EventArgs e)
         {
+            this.createCube.Enabled = false;
             // TODO: Make form to use current worksheet or create new
             // Now we create new worksheet
             Workbook wb = (Workbook)Globals.ThisAddIn.Application.ActiveWorkbook;
@@ -135,6 +143,10 @@ namespace comradewolfxl
 
             Worksheet activeWs = Globals.ThisAddIn.Application.ActiveSheet;
             MessageBox.Show(activeWs.Name);
+
+            activeWs.Cells[HOST_ADDRESS, 1].Value = this.currentHost;
+            activeWs.Cells[OLAP_CUBE_NAME, 1].Value = this.cubeName;
+
 
             List<SelectDTO> selectList = new List<SelectDTO>();
             List<CalculationDTO > calculationList = new List<CalculationDTO>();
@@ -156,6 +168,11 @@ namespace comradewolfxl
                 activeWs.Cells[SELECT_FRONT_ROW_NO, startingSelectVal].Value = tempFrontendName;
                 activeWs.Cells[SELECT_BACK_ROW_NO, startingSelectVal].Value = backendName;
                 activeWs.Cells[SELECT_CALCULATION_ROW_NO, startingSelectVal].Value = backendCalculation;
+
+                // Header of pivot
+                activeWs.Cells[HEADER_ROW_NO, startingSelectVal].Value = tempFrontendName;
+                activeWs.Cells[HEADER_ROW_NO, startingSelectVal].Font.Color = XlRgbColor.rgbWhite;
+                activeWs.Cells[HEADER_ROW_NO, startingSelectVal].Interior.Color = XlRgbColor.rgbBlue;
 
 
                 if (backendCalculation == "none")
@@ -207,7 +224,15 @@ namespace comradewolfxl
                 }
                 
             }
-            await this.getDataFromOLAPAsync(selectList, calculationList, whereList, itemsToBeConverted);
+            try
+            {
+                await this.getDataFromOLAPAsync(selectList, calculationList, whereList, itemsToBeConverted);
+
+            } catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                this.createCube.Enabled = true;
+            }
 
         }
 
@@ -221,9 +246,7 @@ namespace comradewolfxl
             int itemsPerPage = queryInfoDTO.items_per_page;
             long queryId = queryInfoDTO.id;
 
-            int rowNo = 12;
-
-            
+            int rowNo = HEADER_ROW_NO;
 
             for (int pageNo = 0; pageNo < pages; pageNo++)
             {
@@ -243,7 +266,7 @@ namespace comradewolfxl
 
                     foreach(KeyValuePair<string, string> item in itemsToBeConverted)
                     {
-                        bulkData[rowNo - 12 - pageNo * itemsPerPage, columnNo] = row[item.Key];
+                        bulkData[rowNo - (HEADER_ROW_NO) - pageNo * itemsPerPage, columnNo] = row[item.Key];
 
                         columnNo++;
                     }
@@ -257,6 +280,7 @@ namespace comradewolfxl
             }
 
             MessageBox.Show("Done");
+            this.Close();
         }
     }
 }
