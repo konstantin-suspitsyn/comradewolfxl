@@ -1,6 +1,7 @@
 ﻿using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Workbook = Microsoft.Office.Interop.Excel.Workbook;
@@ -212,13 +213,20 @@ namespace comradewolfxl
 
 
                 startingWhereVal++;
-                if (whereType == "between")
+                if (whereType == "BETWEEN")
                 {
                     List<string> betweenCond = new List<string>();
                     betweenCond.Add(tempCond1);
                     betweenCond.Add(tempCond2);
                     whereList.Add(new WhereDTO(backendNameTemp, whereType, betweenCond));
-                } else
+                } else if (whereType == "IN")
+                {
+                    List<string> inCond = tempCond1.Split(';').ToList();
+                    whereList.Add(new WhereDTO(backendNameTemp, whereType, inCond));
+
+                } 
+                
+                else
                 {
                     whereList.Add(new WhereDTO(backendNameTemp, whereType, tempCond1));
                 }

@@ -243,10 +243,28 @@ namespace comradewolfxl
             // WHERE
             for (int i = 1; i < 1000; i++)
             {
-                if (activeWs.Cells[WHERE_BACK_ROW_NO, i] == null)
+                if (activeWs.Cells[WHERE_BACK_ROW_NO, i].Value == null)
                 {
                     break;
                 }
+
+                if (activeWs.Cells[WHERE_TYPE_ROW_NO].Value == "between")
+                {
+                    List<string> listWhereCondTemp = new List<string>();
+                    if (activeWs.Cells[WHERE_CONDITION_1_ROW_NO, i].Value == null | activeWs.Cells[WHERE_CONDITION_2_ROW_NO, i].Value == null)
+                    {
+                        MessageBox.Show("Проблема с условиями WHERE");
+                        return;
+                    }
+
+                    listWhereCondTemp.Add(activeWs.Cells[WHERE_CONDITION_1_ROW_NO, i].Value);
+                    listWhereCondTemp.Add(activeWs.Cells[WHERE_CONDITION_2_ROW_NO, i].Value);
+
+                    whereList.Add(new WhereDTO(activeWs.Cells[WHERE_BACK_ROW_NO, i].Value, activeWs.Cells[WHERE_TYPE_ROW_NO, i].Value, listWhereCondTemp));
+
+                }
+
+                whereList.Add(new WhereDTO(activeWs.Cells[WHERE_BACK_ROW_NO, i].Value, activeWs.Cells[WHERE_TYPE_ROW_NO, i].Value, activeWs.Cells[WHERE_CONDITION_1_ROW_NO, i].Value));
 
                 //TODO: ADD WHERE
 
