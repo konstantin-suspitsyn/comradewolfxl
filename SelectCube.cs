@@ -40,7 +40,7 @@ namespace comradewolfxl
 
             cube = this.comboSelectCube.SelectedItem.ToString();
 
-            OlapFields frontFields = await httpUtils.GetFields(currentHost, cube, token);
+            OlapFields frontFields = await httpUtils.GetFields(currentHost, cube);
             this.Close();
 
             this.createSelectAndWherePanel(frontFields, cube, currentHost);

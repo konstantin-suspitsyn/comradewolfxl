@@ -137,12 +137,14 @@ namespace comradewolfxl
             return tokenFromBackend.access_token;
         }
 
-        internal async Task<OlapFields> GetFields(string currentHost, string cube, string token)
+        internal async Task<OlapFields> GetFields(string currentHost, string cube)
         {
 
             // Returns front fields
 
             OlapFields frontFields = new OlapFields();
+
+            string token = GetTokenForHost(currentHost);
 
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await client.GetAsync(currentHost + string.Format(GET_OLAP_FIELDS, cube));

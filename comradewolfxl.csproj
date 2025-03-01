@@ -266,6 +266,7 @@
   -->
   <ItemGroup>
     <Compile Include="ComradeHttpUtils.cs" />
+    <Compile Include="ComradeService.cs" />
     <Compile Include="ComradewolfRibbon.cs">
       <SubType>Component</SubType>
     </Compile>

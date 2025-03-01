@@ -28,7 +28,8 @@ namespace comradewolfxl
         private void buttonUpdateCube_Click(object sender, RibbonControlEventArgs e)
         {
             ComradeWolfUtils comradeWolfUtils = new ComradeWolfUtils();
-            comradeWolfUtils.updateOLAPData();
+            ComradeService comradeService = new ComradeService();
+            comradeService.updateOlapDataOnSheet();
         }
 
         private void buttonChangeCube_Click(object sender, RibbonControlEventArgs e)

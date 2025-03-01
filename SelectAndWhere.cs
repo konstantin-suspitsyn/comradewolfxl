@@ -30,7 +30,7 @@ namespace comradewolfxl
 
         private const int HEADER_ROW_NO = 12;
 
-
+        // TODO: DELETE AND MOVE IT TO SERVICE
         private const string FIELD_NAME_WITH_CALC = "{0}__{1}";
 
 
@@ -130,6 +130,8 @@ namespace comradewolfxl
             whereItem.Location = new System.Drawing.Point(0, whereIndex * heightOfWhereForm);
             whereIndex++;
         }
+
+        
 
         private async void createCube_ClickAsync(object sender, EventArgs e)
         {

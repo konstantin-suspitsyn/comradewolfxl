@@ -14,6 +14,8 @@ namespace comradewolfxl
     internal class ComradeWolfUtils
     {
 
+        private const string FIELD_NAME_WITH_CALC = "{0}__{1}";
+
         private const int heightOfSelectForm = 40;
         private const int heightOfWhereForm = 70;
 
@@ -184,7 +186,36 @@ namespace comradewolfxl
             }
         }
 
-        internal void updateOLAPData()
+        public int getLastRow(Worksheet ws)
+        {
+            return ws.Cells.Find("*", SearchOrder: XlSearchOrder.xlByRows, SearchDirection: XlSearchDirection.xlPrevious).Row;
+        }
+
+        public void clearOLAPData(int rowsWithOlapData, bool includeHeader)
+        {
+            int startRow = HEADER_ROW_NO;
+
+            if (includeHeader)
+            {
+                startRow++;
+            }
+
+            Workbook wb = (Workbook)Globals.ThisAddIn.Application.ActiveWorkbook;
+
+            Worksheet activeWs = Globals.ThisAddIn.Application.ActiveSheet;
+
+            var startCell = (Microsoft.Office.Interop.Excel.Range) activeWs.Cells[startRow, 1];
+            var endCell = (Microsoft.Office.Interop.Excel.Range) activeWs.Cells[getLastRow(activeWs), rowsWithOlapData];
+
+            activeWs.get_Range(startCell, endCell).ClearContents();
+        }
+
+        public string generateCalculationField(string backendName, string backendCalculation)
+        {
+            return string.Format(FIELD_NAME_WITH_CALC, backendName, backendCalculation);
+        }
+
+        public Tuple<List<SelectDTO>, List<CalculationDTO>, List<WhereDTO>, string, string, List<string>> gatherExistingCubeData()
         {
 
             Workbook wb = (Workbook)Globals.ThisAddIn.Application.ActiveWorkbook;
@@ -197,11 +228,13 @@ namespace comradewolfxl
             List<SelectDTO> selectList = new List<SelectDTO>();
             List<CalculationDTO> calculationList = new List<CalculationDTO>();
             List<WhereDTO> whereList = new List<WhereDTO>();
+            // Ordered list of all selected and calculated objects with types
+            List<string> selectAndCalcNames = new List<string>();
 
             if (activeWs.Cells[1, 1].Value==null)
             {
                 MessageBox.Show("Хост отсутствует");
-                return;
+                throw new Exception("Хост отсутствует");
             }
 
             hostName = activeWs.Cells[1, 1].Value;
@@ -210,15 +243,11 @@ namespace comradewolfxl
             if (activeWs.Cells[2, 1].Value == null)
             {
                 MessageBox.Show("Куб отсутствует");
-                return;
+                throw new Exception("Куб отсутствует");
             }
 
             olapCubeName = activeWs.Cells[2, 1].Value;
 
-
-
-            MessageBox.Show(olapCubeName);
-            MessageBox.Show(hostName);
 
             // TODO: все, что формирует списки в отдельный метод
 
@@ -229,13 +258,19 @@ namespace comradewolfxl
                 {
                     break;
                 }
+                string backendName = activeWs.Cells[SELECT_BACK_ROW_NO, i].Value;
 
                 if (activeWs.Cells[SELECT_CALCULATION_ROW_NO, i].Value == "none")
                 {
-                    selectList.Add(new SelectDTO(activeWs.Cells[SELECT_BACK_ROW_NO, i].Value));
+                    selectList.Add(new SelectDTO(backendName));
+                    selectAndCalcNames.Add(backendName);
                 } else
                 {
-                    calculationList.Add(new CalculationDTO(activeWs.Cells[SELECT_BACK_ROW_NO, i].Value, activeWs.Cells[SELECT_CALCULATION_ROW_NO, i].Value));
+                    string calculation = activeWs.Cells[SELECT_CALCULATION_ROW_NO, i].Value;
+                    calculationList.Add(new CalculationDTO(backendName, calculation));
+
+                    selectAndCalcNames.Add(generateCalculationField(backendName, calculation));
+
                 }
 
             }
@@ -254,7 +289,7 @@ namespace comradewolfxl
                     if (activeWs.Cells[WHERE_CONDITION_1_ROW_NO, i].Value == null | activeWs.Cells[WHERE_CONDITION_2_ROW_NO, i].Value == null)
                     {
                         MessageBox.Show("Проблема с условиями WHERE");
-                        return;
+                        throw new Exception("Проблема с условиями WHERE");
                     }
 
                     listWhereCondTemp.Add(activeWs.Cells[WHERE_CONDITION_1_ROW_NO, i].Value);
@@ -264,12 +299,48 @@ namespace comradewolfxl
 
                 }
 
-                whereList.Add(new WhereDTO(activeWs.Cells[WHERE_BACK_ROW_NO, i].Value, activeWs.Cells[WHERE_TYPE_ROW_NO, i].Value, activeWs.Cells[WHERE_CONDITION_1_ROW_NO, i].Value));
+                string whereBackTemp = activeWs.Cells[WHERE_BACK_ROW_NO, i].Value;
+                string whereTypeTemp = activeWs.Cells[WHERE_TYPE_ROW_NO, i].Value;
+                string whereCondTemp = activeWs.Cells[WHERE_CONDITION_1_ROW_NO, i].Value;
+
+                whereList.Add(new WhereDTO(whereBackTemp, whereTypeTemp, whereCondTemp));
 
                 //TODO: ADD WHERE
 
             }
+            return new Tuple<List<SelectDTO>, List<CalculationDTO>, List<WhereDTO>, string, string, List<string>>(selectList, calculationList, whereList, hostName, olapCubeName, selectAndCalcNames);
+        }
 
+        internal void writeDataPieceToSheet(List<Dictionary<string, object>> dataFromOLAP, int pageNo, int itemsPerPage, int rowNoToInsert, int colNoToInsert, List<string> selectAndCalculations)
+        {
+
+            Workbook wb = (Workbook)Globals.ThisAddIn.Application.ActiveWorkbook;
+
+            Worksheet activeWs = Globals.ThisAddIn.Application.ActiveSheet;
+
+            int rowNo = pageNo * itemsPerPage + HEADER_ROW_NO;
+
+            var startCell = (Microsoft.Office.Interop.Excel.Range)activeWs.Cells[rowNo + 1, 1];
+
+            // BulkInsert https://brandewinder.com/2010/10/17/Write-data-to-an-Excel-worksheet-with-C-fast/
+            var bulkData = new object[rowNoToInsert, colNoToInsert];
+            foreach (Dictionary<string, object> row in dataFromOLAP)
+            {
+                int columnNo = 0;
+
+                foreach (string item in selectAndCalculations)
+                {
+                    bulkData[rowNo - (HEADER_ROW_NO) - pageNo * itemsPerPage, columnNo] = row[item];
+
+                    columnNo++;
+                }
+                rowNo++;
+            }
+
+            var endCell = (Microsoft.Office.Interop.Excel.Range)activeWs.Cells[rowNo, selectAndCalculations.Count];
+            var writeRange = activeWs.get_Range(startCell, endCell);
+
+            writeRange.Value = bulkData;
         }
     }
 
