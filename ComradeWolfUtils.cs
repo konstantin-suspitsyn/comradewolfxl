@@ -283,7 +283,7 @@ namespace comradewolfxl
                     break;
                 }
 
-                if (activeWs.Cells[WHERE_TYPE_ROW_NO].Value == "between")
+                if (Convert.ToString(activeWs.Cells[WHERE_TYPE_ROW_NO, i].Value) == "BETWEEN")
                 {
                     List<string> listWhereCondTemp = new List<string>();
                     if (activeWs.Cells[WHERE_CONDITION_1_ROW_NO, i].Value == null | activeWs.Cells[WHERE_CONDITION_2_ROW_NO, i].Value == null)
@@ -292,18 +292,21 @@ namespace comradewolfxl
                         throw new Exception("Проблема с условиями WHERE");
                     }
 
-                    listWhereCondTemp.Add(activeWs.Cells[WHERE_CONDITION_1_ROW_NO, i].Value);
-                    listWhereCondTemp.Add(activeWs.Cells[WHERE_CONDITION_2_ROW_NO, i].Value);
+                    listWhereCondTemp.Add(Convert.ToString(activeWs.Cells[WHERE_CONDITION_1_ROW_NO, i].Value));
+                    listWhereCondTemp.Add(Convert.ToString(activeWs.Cells[WHERE_CONDITION_2_ROW_NO, i].Value));
 
                     whereList.Add(new WhereDTO(activeWs.Cells[WHERE_BACK_ROW_NO, i].Value, activeWs.Cells[WHERE_TYPE_ROW_NO, i].Value, listWhereCondTemp));
 
                 }
+                else
+                {
 
-                string whereBackTemp = activeWs.Cells[WHERE_BACK_ROW_NO, i].Value;
-                string whereTypeTemp = activeWs.Cells[WHERE_TYPE_ROW_NO, i].Value;
-                string whereCondTemp = activeWs.Cells[WHERE_CONDITION_1_ROW_NO, i].Value;
+                    string whereBackTemp = activeWs.Cells[WHERE_BACK_ROW_NO, i].Value;
+                    string whereTypeTemp = activeWs.Cells[WHERE_TYPE_ROW_NO, i].Value;
+                    string whereCondTemp = Convert.ToString(activeWs.Cells[WHERE_CONDITION_1_ROW_NO, i].Value);
 
-                whereList.Add(new WhereDTO(whereBackTemp, whereTypeTemp, whereCondTemp));
+                    whereList.Add(new WhereDTO(whereBackTemp, whereTypeTemp, whereCondTemp));
+                }
 
                 //TODO: ADD WHERE
 
