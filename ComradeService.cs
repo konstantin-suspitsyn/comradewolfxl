@@ -62,5 +62,25 @@ namespace comradewolfxl
             }
         }
 
+        public void createSelectDialog()
+        {
+            Tuple<List<SelectDTO>, List<CalculationDTO>, List<WhereDTO>, string, string, List<string>> currentCubeData = utils.gatherExistingCubeData();
+            List<SelectDTO> selectList = currentCubeData.Item1;
+            List<CalculationDTO> calculationList = currentCubeData.Item2;
+            List<WhereDTO> whereList = currentCubeData.Item3;
+            string hostName = currentCubeData.Item4;
+            string cubeName = currentCubeData.Item5;
+
+            // TODO: Check host and create token
+
+            //SelectCube selectCube = new SelectAndWhere(selectList, calculationList, whereList, hostName, cubeName);
+            //selectCube.ShowDialog();
+        }
+
+        public void chectHostAndToken(string hostName)
+        {
+            // Checks if host exists
+        }
+
     }
 }

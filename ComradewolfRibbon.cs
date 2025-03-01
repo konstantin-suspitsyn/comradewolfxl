@@ -25,16 +25,16 @@ namespace comradewolfxl
             selectCube.ShowDialog();
         }
 
-        private void buttonUpdateCube_Click(object sender, RibbonControlEventArgs e)
+        private async void buttonUpdateCube_Click(object sender, RibbonControlEventArgs e)
         {
-            ComradeWolfUtils comradeWolfUtils = new ComradeWolfUtils();
             ComradeService comradeService = new ComradeService();
-            comradeService.updateOlapDataOnSheet();
+            await comradeService.updateOlapDataOnSheet();
         }
 
         private void buttonChangeCube_Click(object sender, RibbonControlEventArgs e)
         {
-
+            ComradeService comradeService = new ComradeService();
+            comradeService.createSelectDialog();
         }
     }
 }

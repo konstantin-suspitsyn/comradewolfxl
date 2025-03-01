@@ -21,6 +21,14 @@ namespace comradewolfxl
             update_dropdown();
         }
 
+        public LoginForm(string hostName)
+        {
+            wolfUtils = new ComradeWolfUtils();
+            InitializeComponent();
+            update_dropdown();
+            this.hostBox.Text = hostName;
+        }
+
         private void update_dropdown()
         {
             Dictionary<int, string> hosts = wolfUtils.getHostInfo();
