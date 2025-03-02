@@ -62,7 +62,7 @@ namespace comradewolfxl
             }
         }
 
-        public void createSelectDialog()
+        public async void createSelectDialog()
         {
             Tuple<List<SelectDTO>, List<CalculationDTO>, List<WhereDTO>, string, string, List<string>> currentCubeData = utils.gatherExistingCubeData();
             List<SelectDTO> selectList = currentCubeData.Item1;
@@ -70,17 +70,67 @@ namespace comradewolfxl
             List<WhereDTO> whereList = currentCubeData.Item3;
             string hostName = currentCubeData.Item4;
             string cubeName = currentCubeData.Item5;
+            List<string> selectAndCalculations = currentCubeData.Item6;
 
-            // TODO: Check host and create token
+            bool isLogged = chectHostAndToken(hostName);
+            
+            if (isLogged)
+            {
+                OlapFields olapFields = await httpUtils.GetFields(hostName, cubeName);
+                SelectAndWhere selectAndWhere = new SelectAndWhere(olapFields, selectList, calculationList, whereList, hostName, cubeName, selectAndCalculations);
+                selectAndWhere.ShowDialog();
+            }
 
-            //SelectCube selectCube = new SelectAndWhere(selectList, calculationList, whereList, hostName, cubeName);
-            //selectCube.ShowDialog();
+
         }
 
-        public void chectHostAndToken(string hostName)
+        public bool chectHostAndToken(string hostName)
         {
             // Checks if host exists
+            utils.checkHost(hostName);
+
+            string currentToken = utils.ReadFromRegistry(httpUtils.GetAuthPostfix() + hostName, null);
+
+
+            if ((currentToken == null) || (!httpUtils.IsTokenValid(currentToken)))
+            {
+                // if not then open login form
+                MessageBox.Show("Необходимо залогиниться");
+                LoginForm loginForm = new LoginForm(hostName);
+
+                if (loginForm.ShowDialog() == DialogResult.OK)
+                {
+                    chectHostAndToken(hostName);
+                } else
+                {
+                    MessageBox.Show("Процедура авторизации не пройдена");
+                    return false;
+                }
+            }
+
+            return true; 
+ 
         }
 
+        public Tuple<string, string, bool> getTypeOfSelectOrCalculationItem(string selectAndCalculations)
+        {
+            string fieldName;
+            string calculation = "none";
+            bool isCalculation = false;
+
+            if (selectAndCalculations.Contains("__")) {
+                string[] subs = selectAndCalculations.Split(new string[] { "__" }, StringSplitOptions.None);
+                if (subs.Length != 2) { throw new Exception("Название поля некорректное"); }
+                fieldName = subs[0];
+                calculation = subs[1];
+                isCalculation = true; 
+            } else
+            {
+                fieldName = selectAndCalculations;
+            }
+
+            return new Tuple<string, string, bool>(fieldName, calculation, isCalculation);
+
+        }
     }
 }

@@ -25,6 +25,11 @@ namespace comradewolfxl
 
         private void whereField_SelectedIndexChanged(object sender, EventArgs e)
         {
+            changeWhereField();
+        }
+
+        private void changeWhereField()
+        {
             this.whereType.Items.Clear();
             foreach (KeyValuePair<string, OlapFieldsProperty> field in this.frontFields.fields)
             {
@@ -33,6 +38,7 @@ namespace comradewolfxl
                     this.addWhereCondition(field);
                 }
             }
+
         }
 
             private void addWhereCondition(KeyValuePair<string, OlapFieldsProperty> field)
@@ -72,6 +78,12 @@ namespace comradewolfxl
 
         private void whereType_SelectedIndexChanged(object sender, EventArgs e)
         {
+            updateWhereItems();
+        }
+
+        private Tuple<bool, bool, bool> updateWhereItems()
+        {
+
             // Clear where items
             this.dateTimePicker1.Visible = false;
             this.dateTimePicker2.Visible = false;
@@ -87,16 +99,19 @@ namespace comradewolfxl
             {
                 if (field.Value.front_name == (string)this.whereField.SelectedItem)
                 {
-                    this.changeWhereConditions(field);
+                    Tuple<bool, bool, bool> allTypes = this.changeWhereConditions(field);
+                    return allTypes;
                 }
             }
+            throw new Exception("No such condition");
         }
 
-        private void changeWhereConditions(KeyValuePair<string, OlapFieldsProperty> field)
+        private Tuple<bool, bool, bool> changeWhereConditions(KeyValuePair<string, OlapFieldsProperty> field)
         {
             
             bool isBetween = false;
-            
+            bool isDate = false;
+            bool isDateTime = false;
 
             if (this.whereType.SelectedItem.Equals("Meжду")) { isBetween = true; }
 
@@ -105,6 +120,7 @@ namespace comradewolfxl
                 this.dateTimePicker1.Visible = true;
                 dateTimePicker1.Format = DateTimePickerFormat.Custom;
                 dateTimePicker1.CustomFormat = "yyyy-mm-DD hh:mm";
+                isDateTime = true;
 
                 if (isBetween)
                 {
@@ -119,6 +135,7 @@ namespace comradewolfxl
                 this.dateTimePicker1.Visible = true;
                 dateTimePicker1.Format = DateTimePickerFormat.Custom;
                 dateTimePicker1.CustomFormat = "yyyy-mm-DD";
+                isDate = true;
 
                 if (isBetween)
                 {
@@ -139,8 +156,9 @@ namespace comradewolfxl
             }
 
 
-
+            return new Tuple<bool, bool, bool>(isBetween, isDate, isDateTime);
         }
+
 
         private void deleteButton_Click(object sender, EventArgs e)
         {
@@ -170,6 +188,38 @@ namespace comradewolfxl
         internal string getWhereCondition2()
         {
             return this.textBox2.Text.ToString();
+        }
+
+        internal void addItem(string frontName, string whereTypeFront, string condition1, string condition2)
+        {
+            this.whereField.SelectedItem = frontName;
+            this.changeWhereField();
+            this.whereType.SelectedItem = whereTypeFront;
+
+            Tuple<bool, bool, bool> whereItems = updateWhereItems();
+            bool isBetween = whereItems.Item1;
+            bool isDate = whereItems.Item2;
+            bool isDateTime = whereItems.Item3;
+
+            // TODO: Нужно понять что делать с временем и датой, если они пришли
+
+            if (isDate || isDateTime )
+            {
+                // TODO Требуется тест
+                this.dateTimePicker1.Text = condition1;
+                if (isBetween)
+                {
+                    this.dateTimePicker2.Text = condition2;
+            }
+            } else
+            {
+                this.textBox1.Text = condition1;
+                if (isBetween)
+                {
+                    this.textBox2.Text = condition2;
+                }
+            }
+
         }
     }
 

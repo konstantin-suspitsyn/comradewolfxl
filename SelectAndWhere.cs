@@ -45,10 +45,23 @@ namespace comradewolfxl
         Calculations calculations;
         WhereTypes whereTypes;
 
+        bool isUpdate = false;
+
+        ComradeService comradeService = new ComradeService();
+
 
         public SelectAndWhere(OlapFields frontFields, string cubeName, string currentHost)
         {
             InitializeComponent();
+
+            this.vanillaInit(frontFields, cubeName, currentHost);
+
+            this.isUpdate = false;
+            
+        }
+
+        public void vanillaInit(OlapFields frontFields, string cubeName, string currentHost)
+        {
             this.frontFields = frontFields;
             this.cubeName = cubeName;
             this.currentHost = currentHost;
@@ -72,14 +85,78 @@ namespace comradewolfxl
             panelWhere.AutoScroll = true;
         }
 
-        private void addSelect_Click(object sender, EventArgs e)
+        public SelectAndWhere(OlapFields frontFields, List<SelectDTO> selectList, List<CalculationDTO> calculationList, List<WhereDTO> whereList, string hostName, string cubeName, List<string> selectAndCalculations)
         {
-            
+            InitializeComponent();
+
+            this.vanillaInit(frontFields, cubeName, hostName);
+
+            this.isUpdate = true;
+
+            foreach (string selectCalcItem in selectAndCalculations)
+            {
+                Tuple<string, string, bool> typeOfSelectOrCalculation = comradeService.getTypeOfSelectOrCalculationItem(selectCalcItem);
+
+                string backendName = typeOfSelectOrCalculation.Item1;
+                string calculationType = typeOfSelectOrCalculation.Item2;
+                bool isCalculation = typeOfSelectOrCalculation.Item3;
+
+                SelectItemPiece selectItemPiece = addSelectItem();
+                selectItemPiece.setSelectItem(this.frontFields.fields[backendName].front_name);
+
+                if (isCalculation)
+                {
+                    // Add calculation
+                    selectItemPiece.setCalculationType(this.calculations.calculations[calculationType]);
+                }
+            }
+
+            foreach(WhereDTO where in whereList)         
+            {
+                WhereItem whereItem = this.addWhereItem();
+                string backendName = where.field_name;
+                string frontName = this.frontFields.fields[backendName].front_name;
+                string whereTypeBack = where.where;
+                string whereTypeFront = whereTypes.getWhereFrontByBack(whereTypeBack);
+
+                string condition1 = "";
+                string condition2 = "";
+
+                if (whereTypeBack.Equals("BETWEEN"))
+                {
+                    if (where.condition.GetType().GetGenericTypeDefinition() == typeof(List<>)) {
+
+                        List<string> whereCond = (List<string>) where.condition;
+                        condition1 = whereCond[0];
+                        condition2 = whereCond[1];
+                    }
+                } else
+                {
+                    condition1 = (string) where.condition;
+                }
+
+
+                whereItem.addItem(frontName, whereTypeFront, condition1, condition2);
+            }
+
+        }
+
+        private SelectItemPiece addSelectItem()
+        {
             SelectItemPiece selectItemPiece = new SelectItemPiece(selectIndex, frontFields);
             this.selectPanel.Controls.Add(selectItemPiece);
-            
+
             selectItemPiece.Location = new System.Drawing.Point(0, selectIndex * heightOfSelectForm);
             this.selectIndex++;
+
+            return selectItemPiece;
+        }
+
+
+        private void addSelect_Click(object sender, EventArgs e)
+        {
+
+            addSelectItem();
 
 
         }
@@ -124,14 +201,21 @@ namespace comradewolfxl
 
         private void addWhere_Click(object sender, EventArgs e)
         {
-            WhereItem whereItem = new WhereItem(whereIndex, frontFields);
-            this.panelWhere.Controls.Add(whereItem);
-            
-            whereItem.Location = new System.Drawing.Point(0, whereIndex * heightOfWhereForm);
-            whereIndex++;
+            addWhereItem();
         }
 
-        
+        private WhereItem addWhereItem()
+        {
+            WhereItem whereItem = new WhereItem(whereIndex, frontFields);
+            this.panelWhere.Controls.Add(whereItem);
+
+            whereItem.Location = new System.Drawing.Point(0, whereIndex * heightOfWhereForm);
+            whereIndex++;
+
+            return whereItem;
+        }
+
+
 
         private async void createCube_ClickAsync(object sender, EventArgs e)
         {
@@ -139,13 +223,22 @@ namespace comradewolfxl
             // TODO: Make form to use current worksheet or create new
             // Now we create new worksheet
             Workbook wb = (Workbook)Globals.ThisAddIn.Application.ActiveWorkbook;
-            var worksheet = (Worksheet)wb.Worksheets.Add();
+            if (!isUpdate) {
+                wb.Worksheets.Add();
+            }
+            
 
             // Ordered list of all selected and calculated objects with types
             List<KeyValuePair<string, string>> itemsToBeConverted = new List<KeyValuePair<string, string>>();
 
             Worksheet activeWs = Globals.ThisAddIn.Application.ActiveSheet;
             MessageBox.Show(activeWs.Name);
+
+            // It will completely clear sheet on cube change
+            if (isUpdate)
+            {
+                activeWs.Cells.Clear();
+            }
 
             activeWs.Cells[HOST_ADDRESS, 1].Value = this.currentHost;
             activeWs.Cells[OLAP_CUBE_NAME, 1].Value = this.cubeName;

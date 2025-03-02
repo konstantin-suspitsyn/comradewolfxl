@@ -218,6 +218,14 @@ public class OlapFieldsProperty
 
         }
 
+        public string getWhereFrontByBack(string frontWhere)
+        {
+            foreach (KeyValuePair<string, string> whereKV in this.where) { 
+                if (whereKV.Value.Equals(frontWhere)) return whereKV.Key;
+            }
+            throw new Exception("Ключ where не найден");
+        }
+
         public Dictionary<string, string> where { get; private set; }
     }
 

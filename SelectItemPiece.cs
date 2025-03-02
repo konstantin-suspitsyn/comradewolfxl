@@ -65,6 +65,16 @@ namespace comradewolfxl
             }
         }
 
+        public void setSelectItem(string selectItem)
+        {
+            this.selectItemBox.SelectedItem = selectItem;
+        }
+
+        public void setCalculationType (string calculationType)
+        {
+            this.calculationType.SelectedItem = calculationType;
+        }
+
         private void addCalculationTypes(KeyValuePair<string, OlapFieldsProperty> field)
         {
             this.calculationType.Items.Clear();
