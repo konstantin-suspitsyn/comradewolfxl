@@ -229,6 +229,11 @@ public class OlapFieldsProperty
         public Dictionary<string, string> where { get; private set; }
     }
 
+    public class DistinctValuesDTO
+    {
+        public List<string> distinct_data { get; set; }
+    }
+
     internal class Models
     {
     }

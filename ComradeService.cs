@@ -14,6 +14,11 @@ namespace comradewolfxl
         ComradeHttpUtils httpUtils = new ComradeHttpUtils();
         ComradeWolfUtils utils = new ComradeWolfUtils();
 
+        public async Task<DistinctValuesDTO> GetWhereHelp(string fieldName, string host, string cube)
+        {
+            return await httpUtils.GetDistinctValues(fieldName, host, cube);
+        }
+
         public async Task<Tuple<int, int, long>> GetQueryInfo(List<SelectDTO> selectList, List<CalculationDTO> calculationList, List<WhereDTO> whereList, string currentHost, string cubeName)
         {
             QueryInfoDTO queryInfoDTO = await httpUtils.GetQueryInfo(selectList, calculationList, whereList, currentHost, cubeName);

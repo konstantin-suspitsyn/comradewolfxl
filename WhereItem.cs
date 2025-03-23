@@ -10,10 +10,16 @@ namespace comradewolfxl
         OlapFields frontFields;
         private WhereTypes whereTypesDict = new WhereTypes();
         readonly FieldDataTypes fieldDataTypes = new FieldDataTypes();
+        string cubeName;
+        string currentHost;
 
-        public WhereItem(int id, OlapFields frontFields)
+        public WhereItem(int id, OlapFields frontFields, string cubeName, string currentHost)
         {
             InitializeComponent();
+
+            this.cubeName = cubeName;
+            this.currentHost = currentHost;
+
             this.whereId = id;
             this.frontFields = frontFields;
             foreach (KeyValuePair<string, OlapFieldsProperty> field in this.frontFields.fields)
@@ -218,6 +224,66 @@ namespace comradewolfxl
                 {
                     this.textBox2.Text = condition2;
                 }
+            }
+
+        }
+
+        private string getAutoWhere()
+        {
+            bool isIn = false;
+            string fieldName;
+
+            string result = "";
+
+
+
+            if (this.whereField.SelectedItem == null)
+            {
+                MessageBox.Show("Необходимо выбрать поле");
+                return null;
+            }
+
+            fieldName = this.frontFields.getBackendNameByFrontend(this.whereField.Text);
+
+            if (this.whereType.SelectedItem == null)
+            {
+                MessageBox.Show("Необходимо выбрать поле");
+                return null;
+
+            }
+
+            if (this.whereType.Text == "В списке")
+            {
+                isIn = true;
+            }
+
+            using (WhereHelper whereHelper = new WhereHelper(fieldName, this.cubeName, this.currentHost, isIn))
+            {
+                whereHelper.ShowDialog();
+
+                result = whereHelper.SelectedStaff;
+
+            };
+
+            return result;
+        }
+
+        private void filterHelp_Click(object sender, EventArgs e)
+        {
+            string result = this.getAutoWhere();
+            if (this.textBox1.Visible == true)
+            {
+                this.textBox1.Text = result;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string result = this.getAutoWhere();
+
+            if (this.textBox2.Visible == true)
+            {
+                this.textBox2.Text = result;
             }
 
         }

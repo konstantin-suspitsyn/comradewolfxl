@@ -34,20 +34,20 @@ namespace comradewolfxl
         private const string FIELD_NAME_WITH_CALC = "{0}__{1}";
 
 
-        OlapFields frontFields;
-        string cubeName;
-        string currentHost;
-        ComradeHttpUtils comradeHttpUtils;
-        List<SelectItemPiece> selectItems;
-        List<WhereItem> whereItems;
-        int selectIndex = 0;
-        int whereIndex = 0;
-        Calculations calculations;
-        WhereTypes whereTypes;
+        private OlapFields frontFields;
+        private string cubeName;
+        private string currentHost;
+        private ComradeHttpUtils comradeHttpUtils;
+        private List<SelectItemPiece> selectItems;
+        private List<WhereItem> whereItems;
+        private int selectIndex = 0;
+        private int whereIndex = 0;
+        private Calculations calculations;
+        private WhereTypes whereTypes;
 
-        bool isUpdate = false;
+        private bool isUpdate = false;
 
-        ComradeService comradeService = new ComradeService();
+        private ComradeService comradeService = new ComradeService();
 
 
         public SelectAndWhere(OlapFields frontFields, string cubeName, string currentHost)
@@ -206,7 +206,7 @@ namespace comradewolfxl
 
         private WhereItem addWhereItem()
         {
-            WhereItem whereItem = new WhereItem(whereIndex, frontFields);
+            WhereItem whereItem = new WhereItem(whereIndex, frontFields, cubeName, currentHost); ;
             this.panelWhere.Controls.Add(whereItem);
 
             whereItem.Location = new System.Drawing.Point(0, whereIndex * heightOfWhereForm);

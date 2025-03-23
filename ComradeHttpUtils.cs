@@ -24,6 +24,7 @@ namespace comradewolfxl
         private const string LIST_OF_ALLOWED_TABLES = "v1/cube/available";
         private const string GET_OLAP_FIELDS = "v1/cube/{0}/front-fields";
         private const string GET_QUERY_DATA = "v1/cube/{0}/query_info";
+        private const string GET_DISINCT_FOR_WHERE = "v1/cube/{0}/filter_data";
         private const string GET_ONE_PAGE = "v1/cube/{0}/query_id/{1}?page={2}";
 
         ComradeWolfUtils comradeWolfUtils;
@@ -169,6 +170,37 @@ namespace comradewolfxl
             }
 
             return frontFields;
+        }
+
+        public async Task<DistinctValuesDTO> GetDistinctValues(string fieldName, string host, string cube)
+        {
+
+            Dictionary<string, string> whatToSelect = new Dictionary<string, string>{ { "field_name", fieldName }, { "type", "all" } };
+
+            Dictionary<string, Dictionary<string, string>> preJson = new Dictionary<string, Dictionary<string, string>> { { "SELECT_DISTINCT", whatToSelect } };
+
+            string jsonPayload = JsonConvert.SerializeObject(preJson);
+
+            DistinctValuesDTO result = await this.GetDistinctWhereValues(host, jsonPayload, cube);
+
+            return result;
+        }
+
+        private async Task<DistinctValuesDTO> GetDistinctWhereValues(string host, string jsonPayload, string cube)
+        {
+            string token = GetTokenForHost(host);
+
+            var jsonBody = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await client.PostAsync(host + string.Format(GET_DISINCT_FOR_WHERE, cube), jsonBody);
+            response.EnsureSuccessStatusCode();
+
+            string responseBody = await response.Content.ReadAsStringAsync();
+            DistinctValuesDTO values
+                = JsonConvert.DeserializeObject<DistinctValuesDTO>(responseBody);
+
+            return values;
         }
 
         public async Task<QueryInfoDTO> GetQueryInfo(List<SelectDTO> selectList, List<CalculationDTO> calculationList, List<WhereDTO> whereList, string host, string cube)

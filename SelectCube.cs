@@ -12,12 +12,12 @@ namespace comradewolfxl
 {
     public partial class SelectCube : Form
     {
-        ComradeWolfUtils wolfUtils;
-        ComradeHttpUtils httpUtils;
-        SelectAndWhere selectAndWhere;
+        private ComradeWolfUtils wolfUtils;
+        private ComradeHttpUtils httpUtils;
+        private SelectAndWhere selectAndWhere;
 
-        string token = null;
-        string currentHost = null;
+        public string token = null;
+        public string currentHost = null;
 
         public SelectCube()
         {

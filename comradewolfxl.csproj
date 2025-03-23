@@ -290,6 +290,12 @@
     <Compile Include="SelectAndWhere.Designer.cs">
       <DependentUpon>SelectAndWhere.cs</DependentUpon>
     </Compile>
+    <Compile Include="WhereHelper.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WhereHelper.Designer.cs">
+      <DependentUpon>WhereHelper.cs</DependentUpon>
+    </Compile>
     <Compile Include="WhereItem.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -319,6 +325,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SelectItemPiece.resx">
       <DependentUpon>SelectItemPiece.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WhereHelper.resx">
+      <DependentUpon>WhereHelper.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WhereItem.resx">
       <DependentUpon>WhereItem.cs</DependentUpon>
