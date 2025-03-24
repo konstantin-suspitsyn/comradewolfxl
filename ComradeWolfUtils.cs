@@ -345,6 +345,11 @@ namespace comradewolfxl
 
             writeRange.Value = bulkData;
         }
+
+        public string escapeSeparator(string wordWithSeparator)
+        {
+            return wordWithSeparator.Replace(";", "\\;") ;
+        }
     }
 
     public class Entry

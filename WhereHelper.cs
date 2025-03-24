@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace comradewolfxl
 {
@@ -59,6 +60,7 @@ namespace comradewolfxl
                 if (this.isIn)
                 {
                     System.Windows.Forms.CheckBox checkBox = new System.Windows.Forms.CheckBox();
+                    checkBox.Width = this.itemsPanel.Width - 10;
                     checkBox.Text = item;
                     this.itemsPanel.Controls.Add(checkBox);
 
@@ -68,8 +70,10 @@ namespace comradewolfxl
                 }
                 else
                 {
-                    RadioButton itemRadio = new RadioButton();
+                    System.Windows.Forms.RadioButton itemRadio = new System.Windows.Forms.RadioButton();
                     itemRadio.Text = item;
+                    itemRadio.Width = this.itemsPanel.Width - 10;
+
                     this.itemsPanel.Controls.Add(itemRadio);
 
                     itemRadio.Location = new System.Drawing.Point(0, startingPosition);
@@ -94,7 +98,7 @@ namespace comradewolfxl
                 {
                     if (item.Checked)
                     {
-                        results.Add(item.Text);
+                        results.Add(comradeService.EscapeSeparator(item.Text));
                     }
                 }
 
@@ -102,7 +106,7 @@ namespace comradewolfxl
             }
             else
             {
-                foreach (RadioButton item in this.itemsPanel.Controls)
+                foreach (System.Windows.Forms.RadioButton item in this.itemsPanel.Controls)
                 {
                     if (item.Checked)
                     {

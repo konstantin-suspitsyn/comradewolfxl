@@ -14,6 +14,11 @@ namespace comradewolfxl
         ComradeHttpUtils httpUtils = new ComradeHttpUtils();
         ComradeWolfUtils utils = new ComradeWolfUtils();
 
+        public string EscapeSeparator(string theWord)
+        {
+            return utils.escapeSeparator(theWord);
+        }
+
         public async Task<DistinctValuesDTO> GetWhereHelp(string fieldName, string host, string cube)
         {
             return await httpUtils.GetDistinctValues(fieldName, host, cube);

@@ -37,12 +37,14 @@
             this.deleteButton = new System.Windows.Forms.Button();
             this.filterHelp = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // whereField
             // 
             this.whereField.FormattingEnabled = true;
-            this.whereField.Location = new System.Drawing.Point(1, 1);
+            this.whereField.Location = new System.Drawing.Point(1, 3);
             this.whereField.Name = "whereField";
             this.whereField.Size = new System.Drawing.Size(155, 21);
             this.whereField.TabIndex = 0;
@@ -51,7 +53,7 @@
             // whereType
             // 
             this.whereType.FormattingEnabled = true;
-            this.whereType.Location = new System.Drawing.Point(175, 1);
+            this.whereType.Location = new System.Drawing.Point(175, 3);
             this.whereType.Name = "whereType";
             this.whereType.Size = new System.Drawing.Size(121, 21);
             this.whereType.TabIndex = 1;
@@ -101,7 +103,7 @@
             // 
             // filterHelp
             // 
-            this.filterHelp.Location = new System.Drawing.Point(1, 54);
+            this.filterHelp.Location = new System.Drawing.Point(1, 52);
             this.filterHelp.Name = "filterHelp";
             this.filterHelp.Size = new System.Drawing.Size(36, 23);
             this.filterHelp.TabIndex = 8;
@@ -111,7 +113,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(175, 54);
+            this.button1.Location = new System.Drawing.Point(175, 52);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(36, 23);
             this.button1.TabIndex = 9;
@@ -119,23 +121,33 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.SystemColors.InactiveBorder;
+            this.panel1.Controls.Add(this.button1);
+            this.panel1.Controls.Add(this.filterHelp);
+            this.panel1.Controls.Add(this.deleteButton);
+            this.panel1.Controls.Add(this.textBox2);
+            this.panel1.Controls.Add(this.textBox1);
+            this.panel1.Controls.Add(this.dateTimePicker2);
+            this.panel1.Controls.Add(this.dateTimePicker1);
+            this.panel1.Controls.Add(this.whereType);
+            this.panel1.Controls.Add(this.whereField);
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(341, 79);
+            this.panel1.TabIndex = 10;
+            // 
             // WhereItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.filterHelp);
-            this.Controls.Add(this.deleteButton);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.dateTimePicker2);
-            this.Controls.Add(this.dateTimePicker1);
-            this.Controls.Add(this.whereType);
-            this.Controls.Add(this.whereField);
+            this.Controls.Add(this.panel1);
             this.Name = "WhereItem";
             this.Size = new System.Drawing.Size(342, 82);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -150,5 +162,6 @@
         private System.Windows.Forms.Button deleteButton;
         private System.Windows.Forms.Button filterHelp;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Panel panel1;
     }
 }

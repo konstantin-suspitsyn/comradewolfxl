@@ -81,9 +81,9 @@ namespace comradewolfxl
         {
             this.field_name = field_name;
             this.where = where;
-            if (condition.Count != 2)
+            if (condition.Count < 2)
             {
-                throw new Exception("Список должен содержать 2 строки");
+                throw new Exception("Должно быть 2 элемента или больше");
             }
             this.condition = condition;
         }

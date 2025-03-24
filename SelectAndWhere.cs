@@ -13,7 +13,7 @@ namespace comradewolfxl
     {
 
         private const int heightOfSelectForm = 40;
-        private const int heightOfWhereForm = 70;
+        private const int heightOfWhereForm = 100;
 
         private const int HOST_ADDRESS = 1;
         private const int OLAP_CUBE_NAME = 2;
@@ -316,7 +316,7 @@ namespace comradewolfxl
                     whereList.Add(new WhereDTO(backendNameTemp, whereType, betweenCond));
                 } else if (whereType == "IN")
                 {
-                    List<string> inCond = tempCond1.Split(';').ToList();
+                    List<string> inCond = System.Text.RegularExpressions.Regex.Split(tempCond1, @";(?<!\\;)").ToList();
                     whereList.Add(new WhereDTO(backendNameTemp, whereType, inCond));
 
                 } 
