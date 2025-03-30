@@ -160,5 +160,11 @@ namespace comradewolfxl
 
             return canConnect;
         }
+
+        private void password_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                enter.PerformClick();
+        }
     }
 }

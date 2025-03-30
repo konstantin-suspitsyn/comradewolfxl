@@ -95,6 +95,9 @@ namespace comradewolfxl
             this.dateTimePicker2.Visible = false;
             this.textBox1.Visible = false;
             this.textBox2.Visible = false;
+            this.filterHelp.Visible = false;
+            this.filterHelp2.Visible = false;
+
             textBox1.Clear();
             textBox2.Clear();
             this.dateTimePicker1.Value = DateTimePicker.MinimumDateTime;
@@ -154,10 +157,12 @@ namespace comradewolfxl
             if (field.Value.data_type == this.fieldDataTypes.fieldTypes["NUMBER"] | field.Value.data_type == this.fieldDataTypes.fieldTypes["TEXT"])
             {
                 this.textBox1.Visible = true;
+                this.filterHelp.Visible = true;
 
                 if (isBetween)
                 {
                     this.textBox2.Visible = true;
+                    this.filterHelp2.Visible = true;
                 }
             }
 

@@ -36,7 +36,7 @@
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.deleteButton = new System.Windows.Forms.Button();
             this.filterHelp = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.filterHelp2 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -109,22 +109,24 @@
             this.filterHelp.TabIndex = 8;
             this.filterHelp.Text = "help";
             this.filterHelp.UseVisualStyleBackColor = true;
+            this.filterHelp.Visible = false;
             this.filterHelp.Click += new System.EventHandler(this.filterHelp_Click);
             // 
-            // button1
+            // filterHelp2
             // 
-            this.button1.Location = new System.Drawing.Point(175, 52);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(36, 23);
-            this.button1.TabIndex = 9;
-            this.button1.Text = "help";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.filterHelp2.Location = new System.Drawing.Point(175, 52);
+            this.filterHelp2.Name = "filterHelp2";
+            this.filterHelp2.Size = new System.Drawing.Size(36, 23);
+            this.filterHelp2.TabIndex = 9;
+            this.filterHelp2.Text = "help";
+            this.filterHelp2.UseVisualStyleBackColor = true;
+            this.filterHelp2.Visible = false;
+            this.filterHelp2.Click += new System.EventHandler(this.button1_Click);
             // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.InactiveBorder;
-            this.panel1.Controls.Add(this.button1);
+            this.panel1.Controls.Add(this.filterHelp2);
             this.panel1.Controls.Add(this.filterHelp);
             this.panel1.Controls.Add(this.deleteButton);
             this.panel1.Controls.Add(this.textBox2);
@@ -161,7 +163,7 @@
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Button deleteButton;
         private System.Windows.Forms.Button filterHelp;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button filterHelp2;
         private System.Windows.Forms.Panel panel1;
     }
 }
