@@ -237,6 +237,11 @@ namespace comradewolfxl
 
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await client.PostAsync(host + string.Format(GET_QUERY_DATA, cube), jsonBody);
+            if (response.StatusCode == HttpStatusCode.NotAcceptable)
+            {
+                throw new Exception("Слишком много значений в выдаче. Попробуйте добавить фильтры");
+            }
+
             response.EnsureSuccessStatusCode();
 
             string responseBody = await response.Content.ReadAsStringAsync();

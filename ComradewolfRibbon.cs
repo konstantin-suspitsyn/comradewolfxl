@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace comradewolfxl
 {
@@ -28,7 +29,13 @@ namespace comradewolfxl
         private async void buttonUpdateCube_Click(object sender, RibbonControlEventArgs e)
         {
             ComradeService comradeService = new ComradeService();
-            await comradeService.updateOlapDataOnSheet();
+            try { 
+                await comradeService.updateOlapDataOnSheet();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void buttonChangeCube_Click(object sender, RibbonControlEventArgs e)

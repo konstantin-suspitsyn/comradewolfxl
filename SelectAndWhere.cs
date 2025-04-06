@@ -240,6 +240,11 @@ namespace comradewolfxl
                 activeWs.Cells.Clear();
             }
 
+            if (!isUpdate)
+            {
+                activeWs.Range["A1:A" + SELECT_CALCULATION_ROW_NO.ToString()].Rows.Group();
+            }
+
             activeWs.Cells[HOST_ADDRESS, 1].Value = this.currentHost;
             activeWs.Cells[OLAP_CUBE_NAME, 1].Value = this.cubeName;
 
@@ -249,6 +254,8 @@ namespace comradewolfxl
             List<WhereDTO> whereList = new List<WhereDTO>();
 
             int startingSelectVal = 1;
+
+            int countDistincts = 0;
 
             foreach (SelectItemPiece selectItemPiece in this.selectPanel.Controls)
             {
@@ -261,6 +268,17 @@ namespace comradewolfxl
                 string backendCalculation = this.calculations.getCalculationKeyByValue(tempCalculation);
                 string backendType = this.frontFields.getFieldTypeByFrontend(tempFrontendName);
 
+                if (backendCalculation == "distinct")
+                {
+                    countDistincts++;
+                    if (countDistincts > 1)
+                    {
+                        MessageBox.Show("Нельзя выбирать больше 2 уникальных показателя. Воспользуйтесь одним из расчетов");
+                        this.createCube.Enabled = true;
+                        return;
+                    }
+                }
+     
                 activeWs.Cells[SELECT_FRONT_ROW_NO, startingSelectVal].Value = tempFrontendName;
                 activeWs.Cells[SELECT_BACK_ROW_NO, startingSelectVal].Value = backendName;
                 activeWs.Cells[SELECT_CALCULATION_ROW_NO, startingSelectVal].Value = backendCalculation;
